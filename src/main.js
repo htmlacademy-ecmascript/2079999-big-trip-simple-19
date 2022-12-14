@@ -1,3 +1,4 @@
-import Presenter from './presenter/presenter.js';
+import TravelRoutePresenter from './presenter/travel-route-presenter.js';
 
-new Presenter().init();
+const travelRoutePresenter = new TravelRoutePresenter();
+travelRoutePresenter.init();
