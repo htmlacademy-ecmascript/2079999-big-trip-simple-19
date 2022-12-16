@@ -1,5 +1,3 @@
-import { getRandomElem } from '../util.js';
-
 const destinationMock = [{
   id: 1,
   description: 'Bali is not only a mecca for surfers, where they forget about shampoo and clothes.',
@@ -131,155 +129,39 @@ const offersMock = [{
 
 const offerByType = [{
   type: 'taxi',
-  offers: [{
-    id: 1,
-    title: 'Add comfort class.',
-    price: 100,
-  },
-  {
-    id: 2,
-    title: 'Extra space.',
-    price: 200,
-  },
-  {
-    id: 3,
-    title: 'Power bank.',
-    price: 20,
-  }],
+  offers: [1, 2, 3]
 },
 {
   type: 'bus',
-  offers: [{
-    id: 2,
-    title: 'Extra space.',
-    price: 200,
-  },
-  {
-    id: 3,
-    title: 'Power bank.',
-    price: 20,
-  },
-  {
-    id: 10,
-    title: 'Without a queue.',
-    price: 50,
-  }],
+  offers: [2, 3, 10],
 },
 {
   type: 'train',
-  offers: [{
-    id: 2,
-    title: 'Extra space.',
-    price: 200,
-  },
-  {
-    id: 3,
-    title: 'Power bank.',
-    price: 20,
-  },
-  {
-    id: 4,
-    title: 'Beautiful view.',
-    price: 10,
-  },
-  {
-    id: 5,
-    title: 'Additional set of bed linen.',
-    price: 40,
-  },
-  {
-    id: 6,
-    title: 'The place is far from the toilet.',
-    price: 30,
-  }],
+  offers: [2, 3, 4, 5, 6],
 },
 {
   type: 'ship',
-  offers: [{
-    id: 3,
-    title: 'Power bank.',
-    price: 20,
-  },
-  {
-    id: 7,
-    title: 'The cure for motion sickness.',
-    price: 20,
-  }],
+  offers: [3, 7],
 },
 {
   type: 'drive',
-  offers: [{
-    id: 2,
-    title: 'Extra space.',
-    price: 200,
-  },
-  {
-    id: 3,
-    title: 'Power bank.',
-    price: 20,
-  }],
+  offers: [2, 3],
 },
 {
   type: 'flight',
-  offers: [{
-    id: 2,
-    title: 'Extra space.',
-    price: 200,
-  },
-  {
-    id: 3,
-    title: 'Power bank.',
-    price: 20,
-  }],
+  offers: [2, 3],
 },
 {
   type: 'check-in',
-  offers: [{
-    id: 5,
-    title: 'Additional set of bed linen.',
-    price: 40,
-  },
-  {
-    id: 10,
-    title: 'Without a queue.',
-    price: 50,
-  }],
+  offers: [5, 10],
 },
 {
   type: 'sightseeing',
-  offers: [{
-    id: 8,
-    title: 'Guide services.',
-    price: 300,
-  },
-  {
-    id: 10,
-    title: 'Without a queue.',
-    price: 50,
-  }],
+  offers: [8, 10],
 },
 {
   type: 'restaurant',
-  offers: [{
-    id: 3,
-    title: 'Power bank.',
-    price: 20,
-  },
-  {
-    id: 4,
-    title: 'Beautiful view.',
-    price: 10,
-  },
-  {
-    id: 9,
-    title: 'Personal waiter.',
-    price: 200,
-  },
-  {
-    id: 10,
-    title: 'Without a queue.',
-    price: 50,
-  }],
+  offers: [3, 4, 9, 10],
 }];
 
 const pointMock = [{
@@ -346,8 +228,8 @@ const pointMock = [{
   type: 'sightseeing'
 }];
 
-function getRandomPointMock() {
-  return getRandomElem(pointMock);
+function getPointMock() {
+  return pointMock;
 }
 
 function getDestinationMock() {
@@ -358,8 +240,4 @@ function getOffersMock() {
   return offersMock;
 }
 
-function getOffersByTypeMock() {
-  return offerByType;
-}
-
-export {getRandomPointMock, getDestinationMock, getOffersMock, getOffersByTypeMock};
+export {getPointMock, getDestinationMock, getOffersMock};
