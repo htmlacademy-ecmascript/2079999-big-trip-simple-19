@@ -1,79 +1,55 @@
+import { getRandomElement, getRandomNumber } from './util.js';
+
+const PICTURES_DISCRIPTION = ['Very beautiful landscape.', 'Beautiful view.', 'Cool place', 'I love it.', 'Very nice'];
+
+function getPicturesMock() {
+  return ({
+    src: `http://picsum.photos/300/200?r=${Math.random()}`,
+    description: getRandomElement(PICTURES_DISCRIPTION)
+  });
+}
+
 const destinationMock = [{
   id: 1,
   description: 'Bali is not only a mecca for surfers, where they forget about shampoo and clothes.',
   name: 'Bali',
-  pictures: [
-    {
-      src: `http://picsum.photos/300/200?r=${Math.random()}`,
-      description: 'Very beautiful landscape'
-    }
-  ]
+  pictures: Array.from({length: getRandomNumber(10)}, getPicturesMock),
 },
 {
   id: 2,
   description: 'Mayrhofen is a town in the Zillertal (Ziller river valley) in the Austrian state of Tyrol. It is located approximately an hour from the Tyrolean capital city of Innsbruck.',
   name: 'Mayrhofen',
-  pictures: [
-    {
-      src: `http://picsum.photos/300/200?r=${Math.random()}`,
-      description: 'Very beautiful landscape'
-    }
-  ]
+  pictures: Array.from({length: getRandomNumber(10)}, getPicturesMock),
 },
 {
   id: 3,
   description: 'Cappadocia is a historical region in Central Anatolia, Turkey. It largely is in the provinces Nevşehir, Kayseri, Aksaray, Krşehir, Sivas and Niğde.',
   name: 'Cappadocia',
-  pictures: [
-    {
-      src: `http://picsum.photos/300/200?r=${Math.random()}`,
-      description: 'Very beautiful landscape'
-    }
-  ]
+  pictures: Array.from({length: getRandomNumber(10)}, getPicturesMock),
 },
 {
   id: 4,
   description: 'Munich is the capital and most populous city of the German state of Bavaria.',
   name: 'Munich',
-  pictures: [
-    {
-      src: `http://picsum.photos/300/200?r=${Math.random()}`,
-      description: 'Very beautiful landscape'
-    }
-  ]
+  pictures: Array.from({length: getRandomNumber(10)}, getPicturesMock),
 },
 {
   id: 5,
   description: 'Qatar is a country in Western Asia. It occupies the small Qatar Peninsula on the northeastern coast of the Arabian Peninsula in the Middle East.',
   name: 'Qatar',
-  pictures: [
-    {
-      src: `http://picsum.photos/300/200?r=${Math.random()}`,
-      description: 'Very beautiful landscape'
-    }
-  ]
+  pictures: Array.from({length: getRandomNumber(10)}, getPicturesMock),
 },
 {
   id: 6,
   description: 'Lloret de Mar is a Mediterranean coastal town in Catalonia, Spain.',
   name: 'Lloret de Mar',
-  pictures: [
-    {
-      src: `http://picsum.photos/300/200?r=${Math.random()}`,
-      description: 'Very beautiful landscape'
-    }
-  ]
+  pictures: Array.from({length: getRandomNumber(10)}, getPicturesMock),
 },
 {
   id: 7,
   description: 'Venice is a city in northeastern Italy and the capital of the Veneto region. It is built on a group of 118 small islands.',
   name: 'Venice',
-  pictures: [
-    {
-      src: `http://picsum.photos/300/200?r=${Math.random()}`,
-      description: 'Very beautiful landscape'
-    }
-  ]
+  pictures: Array.from({length: getRandomNumber(10)}, getPicturesMock),
 }];
 
 const offersMock = [{
@@ -127,7 +103,7 @@ const offersMock = [{
   price: 50,
 }];
 
-const offerByType = [{
+const offersByType = [{
   type: 'taxi',
   offers: [1, 2, 3]
 },
@@ -164,13 +140,24 @@ const offerByType = [{
   offers: [3, 4, 9, 10],
 }];
 
+function getOffersArrayMock(type) {
+  const offers = offersByType[offersByType.findIndex((elem) => elem.type === type)].offers;
+  const result = [];
+  for (let i = 0; i < offers.length; i++) {
+    if (Math.random() < 0.5) {
+      result.push(offers[i]);
+    }
+  }
+  return result;
+}
+
 const pointMock = [{
   basePrice: 500,
   dateFrom: '2019-07-10T22:55:56.845Z',
   dateTo: '2019-07-11T11:22:13.375Z',
   destination: 1,
-  id: '0',
-  offers: offerByType[offerByType.findIndex((elem) => elem.type === 'taxi')].offers,
+  id: 0,
+  offers: getOffersArrayMock('taxi'),
   type: 'taxi'
 },
 {
@@ -178,8 +165,8 @@ const pointMock = [{
   dateFrom: '2019-07-12T12:55:56.321Z',
   dateTo: '2019-07-14T12:01:13.653Z',
   destination: 2,
-  id: '1',
-  offers: offerByType[offerByType.findIndex((elem) => elem.type === 'drive')].offers,
+  id: 1,
+  offers: getOffersArrayMock('drive'),
   type: 'drive'
 },
 {
@@ -187,8 +174,8 @@ const pointMock = [{
   dateFrom: '2019-07-15T09:32:12.532Z',
   dateTo: '2019-07-15T11:56:32.435Z',
   destination: 3,
-  id: '2',
-  offers: offerByType[offerByType.findIndex((elem) => elem.type === 'flight')].offers,
+  id: 2,
+  offers: getOffersArrayMock('flight'),
   type: 'flight'
 },
 {
@@ -196,8 +183,8 @@ const pointMock = [{
   dateFrom: '2019-07-16T15:12:52.532Z',
   dateTo: '2019-07-16T20:41:45.987Z',
   destination: 4,
-  id: '3',
-  offers: offerByType[offerByType.findIndex((elem) => elem.type === 'bus')].offers,
+  id: 3,
+  offers: getOffersArrayMock('bus'),
   type: 'bus'
 },
 {
@@ -205,8 +192,8 @@ const pointMock = [{
   dateFrom: '2019-07-18T06:23:00.235Z',
   dateTo: '2019-07-18T11:56:37.873Z',
   destination: 5,
-  id: '4',
-  offers: offerByType[offerByType.findIndex((elem) => elem.type === 'train')].offers,
+  id: 4,
+  offers: getOffersArrayMock('train'),
   type: 'train'
 },
 {
@@ -214,8 +201,8 @@ const pointMock = [{
   dateFrom: '2019-07-22T15:00:00.000Z',
   dateTo: '2019-07-24T10:15:00.324Z',
   destination: 6,
-  id: '5',
-  offers: offerByType[offerByType.findIndex((elem) => elem.type === 'ship')].offers,
+  id: 5,
+  offers: getOffersArrayMock('ship'),
   type: 'ship'
 },
 {
@@ -223,8 +210,8 @@ const pointMock = [{
   dateFrom: '2019-07-24T10:20:00.325Z',
   dateTo: '2019-07-24T22:33:34.531Z',
   destination: 7,
-  id: '6',
-  offers: offerByType[offerByType.findIndex((elem) => elem.type === 'sightseeing')].offers,
+  id: 6,
+  offers: getOffersArrayMock('sightseeing'),
   type: 'sightseeing'
 }];
 
@@ -240,4 +227,8 @@ function getOffersMock() {
   return offersMock;
 }
 
-export {getPointMock, getDestinationMock, getOffersMock};
+function getOffersByType() {
+  return offersByType;
+}
+
+export {getPointMock, getDestinationMock, getOffersMock, getOffersByType};
