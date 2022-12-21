@@ -5,18 +5,24 @@ import EditPointView from '../view/edit-point.js';
 import PointView from '../view/point.js';
 
 export default class TravelRoutePresenter {
+  #filtersPosition = null;
+  #containerPosition = null;
+  #pointModel = null;
+  #points = null;
+  #offersByType = null;
+
   constructor(filtersPosition, containerPosition, pointModel) {
-    this.filtersPosition = filtersPosition;
-    this.containerPosition = containerPosition;
-    this.pointModel = pointModel;
+    this.#filtersPosition = filtersPosition;
+    this.#containerPosition = containerPosition;
+    this.#pointModel = pointModel;
   }
 
   init() {
-    this.points = [...this.pointModel.getPoints()];
-    this.offersByType = [...this.pointModel.getOffersByType()];
-    render(new FilterView(), this.filtersPosition, RenderPosition.AFTERBEGIN);
-    render(new SortView(), this.containerPosition, RenderPosition.AFTERBEGIN);
-    render(new EditPointView(this.points[4], this.offersByType), this.containerPosition);
-    this.points.forEach((point) => render(new PointView(point), this.containerPosition));
+    this.#points = [...this.#pointModel.points];
+    this.#offersByType = [...this.#pointModel.offersByType];
+    render(new FilterView(), this.#filtersPosition, RenderPosition.AFTERBEGIN);
+    render(new SortView(), this.#containerPosition, RenderPosition.AFTERBEGIN);
+    render(new EditPointView(this.#points[4], this.#offersByType), this.#containerPosition);
+    this.#points.forEach((point) => render(new PointView(point), this.#containerPosition));
   }
 }

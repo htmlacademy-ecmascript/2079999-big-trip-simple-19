@@ -105,24 +105,28 @@ function createEditPointTemplate(point, offersByType) {
 }
 
 export default class EditPointView {
+  #point = null;
+  #offersByType = null;
+  #element = null;
+
   constructor(point, offersByType) {
-    this.point = point;
-    this.offersByType = offersByType;
+    this.#point = point;
+    this.#offersByType = offersByType;
   }
 
-  getTemplate(point, offersByType) {
+  #getTemplate(point, offersByType) {
     return createEditPointTemplate(point, offersByType);
   }
 
-  getElement() {
-    if (!this.element){
-      return createElement(this.getTemplate(this.point, this.offersByType));
+  get element() {
+    if (!this.#element){
+      return createElement(this.#getTemplate(this.#point, this.#offersByType));
     } else {
-      return this.element;
+      return this.#element;
     }
   }
 
   deleteElement() {
-    this.element = null;
+    this.#element = null;
   }
 }
