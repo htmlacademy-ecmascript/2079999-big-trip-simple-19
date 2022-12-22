@@ -12,4 +12,8 @@ function formatTime(data) {
   return dayjs(data).format('HH:mm');
 }
 
-export {formatFullData, formatDayData, formatTime};
+function isEscape(evt) {
+  return (evt.key === 'Esc' || evt.key === 'Escape');
+}
+
+export {formatFullData, formatDayData, formatTime, isEscape};

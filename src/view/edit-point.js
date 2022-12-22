@@ -120,10 +120,9 @@ export default class EditPointView {
 
   get element() {
     if (!this.#element){
-      return createElement(this.#getTemplate(this.#point, this.#offersByType));
-    } else {
-      return this.#element;
+      this.#element = createElement(this.#getTemplate(this.#point, this.#offersByType));
     }
+    return this.#element;
   }
 
   deleteElement() {

@@ -53,11 +53,10 @@ export default class PointView {
   }
 
   get element() {
-    if (!this.#element){
-      return createElement(this.#getTemplate(this.#point));
-    } else {
-      return this.#element;
+    if (!this.#element) {
+      this.#element = createElement(this.#getTemplate(this.#point));
     }
+    return this.#element;
   }
 
   deleteElement() {
