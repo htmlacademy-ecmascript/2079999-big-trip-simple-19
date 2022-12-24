@@ -1,18 +1,29 @@
 import {createElement} from '../render.js';
+import {formatDayData, formatTime} from '../utils.js';
+
+function createOffersListTemplate(point) {
+  return point.offers.map((offer) => `
+      <li class="event__offer">
+        <span class="event__offer-title">${offer.title}</span>
+        &plus;&euro;&nbsp;
+        <span class="event__offer-price">${offer.price}</span>
+      </li>`)
+    .join('');
+}
 
 function createPointTemplate(point) {
   return (`<li class="trip-events__item">
             <div class="event">
-              <time class="event__date" datetime="2019-03-18">MAR 18</time>
+              <time class="event__date" datetime="2019-03-18">${formatDayData(point.dateFrom)}</time>
               <div class="event__type">
-                <img class="event__type-icon" width="42" height="42" src="img/icons/taxi.png" alt="Event type icon">
+                <img class="event__type-icon" width="42" height="42" src="img/icons/${point.type}.png" alt="Event type icon">
               </div>
               <h3 class="event__title">${point.destination.name}</h3>
               <div class="event__schedule">
                 <p class="event__time">
-                  <time class="event__start-time" datetime="2019-03-18T10:30">10:30</time>
+                  <time class="event__start-time" datetime="2019-03-18T10:30">${formatTime(point.dateFrom)}</time>
                   &mdash;
-                  <time class="event__end-time" datetime="2019-03-18T11:00">11:00</time>
+                  <time class="event__end-time" datetime="2019-03-18T11:00">${formatTime(point.dateTo)}</time>
                 </p>
               </div>
               <p class="event__price">
@@ -20,11 +31,7 @@ function createPointTemplate(point) {
               </p>
               <h4 class="visually-hidden">Offers:</h4>
               <ul class="event__selected-offers">
-                <li class="event__offer">
-                  <span class="event__offer-title">Order Uber</span>
-                  &plus;&euro;&nbsp;
-                  <span class="event__offer-price">20</span>
-                </li>
+                ${createOffersListTemplate(point)}
               </ul>
               <button class="event__rollup-btn" type="button">
                 <span class="visually-hidden">Open event</span>
@@ -34,23 +41,25 @@ function createPointTemplate(point) {
 }
 
 export default class PointView {
+  #point = null;
+  #element = null;
+
   constructor(point) {
-    this.point = point;
+    this.#point = point;
   }
 
-  getTemplate(point) {
+  #getTemplate(point) {
     return createPointTemplate(point);
   }
 
-  getElement() {
-    if (!this.element){
-      return createElement(this.getTemplate(this.point));
-    } else {
-      return this.element;
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.#getTemplate(this.#point));
     }
+    return this.#element;
   }
 
   deleteElement() {
-    this.element = null;
+    this.#element = null;
   }
 }
