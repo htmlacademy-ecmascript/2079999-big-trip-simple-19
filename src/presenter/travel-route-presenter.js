@@ -52,10 +52,15 @@ export default class TravelRoutePresenter {
   }
 
   init() {
-    this.#points = [...this.#pointModel.points];
+    // this.#points = [...this.#pointModel.points];
+    this.#points = [];
     this.#offersByType = [...this.#pointModel.offersByType];
     render(new FilterView(), this.#filtersPosition, RenderPosition.AFTERBEGIN);
     render(new SortView(), this.#containerPosition, RenderPosition.AFTERBEGIN);
-    this.#points.forEach((point) => this.#renderPoint(point));
+    if (!this.#points || !this.#points.lenght) {
+      render(new PointView(null), this.#containerPosition);
+    } else {
+      this.#points.forEach((point) => this.#renderPoint(point));
+    }
   }
 }
