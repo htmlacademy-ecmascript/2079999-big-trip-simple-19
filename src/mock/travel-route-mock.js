@@ -1,58 +1,59 @@
 import { getRandomElement, getRandomNumber } from './util.js';
 
 const PICTURES_DISCRIPTION = ['Very beautiful landscape.', 'Beautiful view.', 'Cool place', 'I love it.', 'Very nice'];
+const PICTURES_COUNT = 7;
 
-function getPicturesMock() {
+function getPictures() {
   return ({
     src: `http://picsum.photos/300/200?r=${Math.random()}`,
     description: getRandomElement(PICTURES_DISCRIPTION)
   });
 }
 
-const destinationMock = [{
+const destinations = [{
   id: 1,
   description: 'Bali is not only a mecca for surfers, where they forget about shampoo and clothes.',
   name: 'Bali',
-  pictures: Array.from({length: getRandomNumber(10)}, getPicturesMock),
+  pictures: Array.from({length: getRandomNumber(PICTURES_COUNT)}, getPictures),
 },
 {
   id: 2,
   description: 'Mayrhofen is a town in the Zillertal (Ziller river valley) in the Austrian state of Tyrol. It is located approximately an hour from the Tyrolean capital city of Innsbruck.',
   name: 'Mayrhofen',
-  pictures: Array.from({length: getRandomNumber(10)}, getPicturesMock),
+  pictures: Array.from({length: getRandomNumber(PICTURES_COUNT)}, getPictures),
 },
 {
   id: 3,
   description: 'Cappadocia is a historical region in Central Anatolia, Turkey. It largely is in the provinces Nevşehir, Kayseri, Aksaray, Krşehir, Sivas and Niğde.',
   name: 'Cappadocia',
-  pictures: Array.from({length: getRandomNumber(10)}, getPicturesMock),
+  pictures: Array.from({length: getRandomNumber(PICTURES_COUNT)}, getPictures),
 },
 {
   id: 4,
   description: 'Munich is the capital and most populous city of the German state of Bavaria.',
   name: 'Munich',
-  pictures: Array.from({length: getRandomNumber(10)}, getPicturesMock),
+  pictures: Array.from({length: getRandomNumber(PICTURES_COUNT)}, getPictures),
 },
 {
   id: 5,
   description: 'Qatar is a country in Western Asia. It occupies the small Qatar Peninsula on the northeastern coast of the Arabian Peninsula in the Middle East.',
   name: 'Qatar',
-  pictures: Array.from({length: getRandomNumber(10)}, getPicturesMock),
+  pictures: Array.from({length: getRandomNumber(PICTURES_COUNT)}, getPictures),
 },
 {
   id: 6,
   description: 'Lloret de Mar is a Mediterranean coastal town in Catalonia, Spain.',
   name: 'Lloret de Mar',
-  pictures: Array.from({length: getRandomNumber(10)}, getPicturesMock),
+  pictures: Array.from({length: getRandomNumber(PICTURES_COUNT)}, getPictures),
 },
 {
   id: 7,
   description: 'Venice is a city in northeastern Italy and the capital of the Veneto region. It is built on a group of 118 small islands.',
   name: 'Venice',
-  pictures: Array.from({length: getRandomNumber(10)}, getPicturesMock),
+  pictures: Array.from({length: getRandomNumber(PICTURES_COUNT)}, getPictures),
 }];
 
-const offersMock = [{
+const offers = [{
   id: 1,
   title: 'Add comfort class.',
   price: 100,
@@ -140,24 +141,24 @@ const offersByType = [{
   offers: [3, 4, 9, 10],
 }];
 
-function getOffersArrayMock(type) {
-  const offers = offersByType[offersByType.findIndex((elem) => elem.type === type)].offers;
+function getOffersArray(type) {
+  const offersByTypes = offersByType[offersByType.findIndex((elem) => elem.type === type)].offers;
   const result = [];
-  for (let i = 0; i < offers.length; i++) {
+  offersByTypes.forEach((offer) => {
     if (Math.random() < 0.5) {
-      result.push(offers[i]);
+      result.push(offer);
     }
-  }
+  });
   return result;
 }
 
-const pointMock = [{
+const points = [{
   basePrice: 500,
   dateFrom: '2019-07-10T22:55:56.845Z',
   dateTo: '2019-07-11T11:22:13.375Z',
   destination: 1,
   id: 0,
-  offers: getOffersArrayMock('taxi'),
+  offers: getOffersArray('taxi'),
   type: 'taxi'
 },
 {
@@ -166,7 +167,7 @@ const pointMock = [{
   dateTo: '2019-07-14T12:01:13.653Z',
   destination: 2,
   id: 1,
-  offers: getOffersArrayMock('drive'),
+  offers: getOffersArray('drive'),
   type: 'drive'
 },
 {
@@ -175,7 +176,7 @@ const pointMock = [{
   dateTo: '2019-07-15T11:56:32.435Z',
   destination: 3,
   id: 2,
-  offers: getOffersArrayMock('flight'),
+  offers: getOffersArray('flight'),
   type: 'flight'
 },
 {
@@ -184,7 +185,7 @@ const pointMock = [{
   dateTo: '2019-07-16T20:41:45.987Z',
   destination: 4,
   id: 3,
-  offers: getOffersArrayMock('bus'),
+  offers: getOffersArray('bus'),
   type: 'bus'
 },
 {
@@ -193,7 +194,7 @@ const pointMock = [{
   dateTo: '2019-07-18T11:56:37.873Z',
   destination: 5,
   id: 4,
-  offers: getOffersArrayMock('train'),
+  offers: getOffersArray('train'),
   type: 'train'
 },
 {
@@ -202,7 +203,7 @@ const pointMock = [{
   dateTo: '2019-07-24T10:15:00.324Z',
   destination: 6,
   id: 5,
-  offers: getOffersArrayMock('ship'),
+  offers: getOffersArray('ship'),
   type: 'ship'
 },
 {
@@ -211,24 +212,24 @@ const pointMock = [{
   dateTo: '2019-07-24T22:33:34.531Z',
   destination: 7,
   id: 6,
-  offers: getOffersArrayMock('sightseeing'),
+  offers: getOffersArray('sightseeing'),
   type: 'sightseeing'
 }];
 
-function getPointMock() {
-  return pointMock;
+function getPoints() {
+  return points;
 }
 
-function getDestinationMock() {
-  return destinationMock;
+function getDestinations() {
+  return destinations;
 }
 
-function getOffersMock() {
-  return offersMock;
+function getOffers() {
+  return offers;
 }
 
 function getOffersByType() {
   return offersByType;
 }
 
-export {getPointMock, getDestinationMock, getOffersMock, getOffersByType};
+export { getPoints, getDestinations, getOffers, getOffersByType };

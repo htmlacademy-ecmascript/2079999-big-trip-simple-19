@@ -1,5 +1,5 @@
-import {createElement} from '../render.js';
-import {formatDayData, formatTime} from '../utils.js';
+import { createElement } from '../render.js';
+import { formatDayDate, formatTime } from '../utils.js';
 
 const FILTERS_MESSAGE = {
   everything:'Click New Event to create your first point',
@@ -38,7 +38,7 @@ function createPointTemplate(point) {
   }
   return (`<li class="trip-events__item">
             <div class="event">
-              <time class="event__date" datetime="2019-03-18">${formatDayData(point.dateFrom)}</time>
+              <time class="event__date" datetime="2019-03-18">${formatDayDate(point.dateFrom)}</time>
               <div class="event__type">
                 <img class="event__type-icon" width="42" height="42" src="img/icons/${point.type}.png" alt="Event type icon">
               </div>
