@@ -1,3 +1,5 @@
-const OFFERS_TYPE = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
+import { getOffersByType } from './mock/travel-route-mock.js';
 
-export {OFFERS_TYPE};
+const OFFERS_TYPE = getOffersByType().map(({type}) => type);
+
+export { OFFERS_TYPE };

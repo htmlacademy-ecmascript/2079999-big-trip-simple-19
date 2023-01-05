@@ -1,4 +1,4 @@
-import {render, RenderPosition} from '../render.js';
+import { render, RenderPosition } from '../render.js';
 import FilterView from '../view/filter.js';
 import SortView from '../view/sort.js';
 import EditPointView from '../view/edit-point.js';
@@ -56,6 +56,10 @@ export default class TravelRoutePresenter {
     this.#offersByType = [...this.#pointModel.offersByType];
     render(new FilterView(), this.#filtersPosition, RenderPosition.AFTERBEGIN);
     render(new SortView(), this.#containerPosition, RenderPosition.AFTERBEGIN);
-    this.#points.forEach((point) => this.#renderPoint(point));
+    if (!this.#points || !this.#points.length) {
+      render(new PointView(null), this.#containerPosition);
+    } else {
+      this.#points.forEach((point) => this.#renderPoint(point));
+    }
   }
 }

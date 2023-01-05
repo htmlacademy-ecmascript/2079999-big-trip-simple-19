@@ -1,29 +1,27 @@
-import {createElement} from '../render.js';
+import { createElement } from '../render.js';
 import { OFFERS_TYPE } from '../const.js';
-import {formatFullData} from '../utils.js';
+import { formatFullDate } from '../utils.js';
 
 function createEventTypeTemplate(pointType) {
-  return OFFERS_TYPE.map((eventType) => `
+  return OFFERS_TYPE.map((eventType, index) => `
     <div class="event__type-item">
-      <input id="event-type-${eventType}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${eventType}"${eventType === pointType ? 'checked' : ''}>
+      <input id="event-type-${eventType}-${index}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${eventType}"${eventType === pointType ? 'checked' : ''}>
       <label class="event__type-label  event__type-label--${eventType}" for="event-type-${eventType}-1">${eventType}</label>
     </div>`).join('');
 }
 
 function isIncludes(pointOffers, offerType) {
   for (let i = 0; i < pointOffers.length; i++) {
-    if (pointOffers[i].id === offerType) {
-      return true;
-    }
+    return (pointOffers[i].id === offerType);
   }
 }
 
 function createOffersListTemplate(point, offersByType) {
   const offerType = offersByType.find((offer) => offer.type === point.type);
-  return offerType.offers.map((offer) => `
+  return offerType.offers.map((offer, index) => `
         <div class="event__offer-selector">
-          <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage"${isIncludes(point.offers, offer.id) ? 'checked' : ''}>
-          <label class="event__offer-label" for="event-offer-luggage-1">
+          <input class="event__offer-checkbox  visually-hidden" id="event-offer-${point.id}-${offer.id}-${index}" type="checkbox" name="event-offer-${point.id}-${offer.id}"${isIncludes(point.offers, offer.id) ? 'checked' : ''}>
+          <label class="event__offer-label" for="event-offer-${point.id}-${offer.id}-${index}">
             <span class="event__offer-title">${offer.title}</span>
             &plus;&euro;&nbsp;
             <span class="event__offer-price">${offer.price}</span>
@@ -67,10 +65,10 @@ function createEditPointTemplate(point, offersByType) {
 
               <div class="event__field-group  event__field-group--time">
                 <label class="visually-hidden" for="event-start-time-1">From</label>
-                <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${formatFullData(point.dateFrom)}">
+                <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${formatFullDate(point.dateFrom)}">
                 &mdash;
                 <label class="visually-hidden" for="event-end-time-1">To</label>
-                <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${formatFullData(point.dateTo)}">
+                <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${formatFullDate(point.dateTo)}">
               </div>
 
               <div class="event__field-group  event__field-group--price">

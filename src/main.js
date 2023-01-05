@@ -1,13 +1,13 @@
 import TravelRoutePresenter from './presenter/travel-route-presenter.js';
 import PointModel from './model/travel-route-model.js';
-import { getPointMock, getDestinationMock, getOffersMock, getOffersByType } from './mock/travel-route-mock.js';
+import { getPoints, getDestinations, getOffers, getOffersByType } from './mock/travel-route-mock.js';
 
 const filtersPosition = document.querySelector('.trip-controls__filters');
 const containerPosition = document.querySelector('.trip-events');
 
-const points = getPointMock();
-const destinations = getDestinationMock();
-const offers = getOffersMock();
+const points = getPoints();
+const destinations = getDestinations();
+const offers = getOffers();
 const offersByType = getOffersByType();
 
 const pointModel = new PointModel({points, destinations, offers, offersByType});
