@@ -1,6 +1,7 @@
 import { createElement } from '../render.js';
 import { OFFERS_TYPE } from '../const.js';
 import { formatFullDate } from '../utils.js';
+import AbstractView from '../framework/view/abstract-view.js';
 
 function createEventTypeTemplate(pointType) {
   return OFFERS_TYPE.map((eventType, index) => `
@@ -102,14 +103,19 @@ function createEditPointTemplate(point, offersByType) {
           </form>`);
 }
 
-export default class EditPointView {
+export default class EditPointView extends AbstractView {
   #point = null;
   #offersByType = null;
   #element = null;
+  #closeFormHandler = null;
 
-  constructor(point, offersByType) {
+  constructor(point, offersByType, closeFormHandler) {
+    super();
     this.#point = point;
     this.#offersByType = offersByType;
+    this.#closeFormHandler = closeFormHandler;
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#closeFormHandler);
+    this.element.querySelector('.event__save-btn').addEventListener('submit', this.#closeFormHandler);
   }
 
   #getTemplate(point, offersByType) {
@@ -121,9 +127,5 @@ export default class EditPointView {
       this.#element = createElement(this.#getTemplate(this.#point, this.#offersByType));
     }
     return this.#element;
-  }
-
-  deleteElement() {
-    this.#element = null;
   }
 }

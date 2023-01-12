@@ -1,4 +1,4 @@
-import { render, RenderPosition } from '../render.js';
+import { render, RenderPosition } from '../framework/render.js';
 import FilterView from '../view/filter.js';
 import SortView from '../view/sort.js';
 import EditPointView from '../view/edit-point.js';
@@ -19,35 +19,28 @@ export default class TravelRoutePresenter {
   }
 
   #renderPoint(point) {
-    const pointView = new PointView(point);
-    const editView = new EditPointView(point, this.#offersByType);
+    const pointView = new PointView(point, openFormHandler.bind(this));
+    const editView = new EditPointView(point, this.#offersByType, closeFormHandler.bind(this));
 
-    const openFormButton = pointView.element.querySelector('.event__rollup-btn');
-    const closeFormButton = editView.element.querySelector('.event__rollup-btn');
-    const submitFormButton = editView.element.querySelector('.event__save-btn');
+    const escKeydownHandler = (evt) => {
+      if (isEscape(evt)) {
+        closeFormHandler(evt);
+      }
+    };
 
-    const closeFormHandler = (evt) => {
+    function closeFormHandler(evt) {
       evt.preventDefault();
       render(pointView, this.#containerPosition);
       this.#containerPosition.replaceChild(pointView.element, editView.element);
       document.removeEventListener('keydown', escKeydownHandler);
-    };
+    }
 
-    const openFormHandler = () => {
+    function openFormHandler() {
       render(editView, this.#containerPosition);
       this.#containerPosition.replaceChild(editView.element, pointView.element);
       document.addEventListener('keydown', escKeydownHandler);
-    };
-
-    function escKeydownHandler(evt) {
-      if (isEscape(evt)) {
-        closeFormHandler(evt);
-      }
     }
 
-    openFormButton.addEventListener('click', openFormHandler);
-    closeFormButton.addEventListener('click', closeFormHandler);
-    submitFormButton.addEventListener('submit', closeFormHandler);
     render(pointView, this.#containerPosition);
   }
 
