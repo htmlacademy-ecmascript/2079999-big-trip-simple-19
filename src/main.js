@@ -10,6 +10,6 @@ const destinations = getDestinations();
 const offers = getOffers();
 const offersByType = getOffersByType();
 
- const pointModel = new PointModel({points, destinations, offers, offersByType});
- const travelRoutePresenter = new TravelRoutePresenter(filtersPosition, containerPosition, pointModel);
- travelRoutePresenter.init();
+const pointModel = new PointModel({points, destinations, offers, offersByType});
+const travelRoutePresenter = new TravelRoutePresenter(filtersPosition, containerPosition, pointModel);
+travelRoutePresenter.init();

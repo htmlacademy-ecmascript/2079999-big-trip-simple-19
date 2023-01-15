@@ -7,39 +7,38 @@ export default class PointPresenter {
   #point = null;
   #position = null;
   #model = null;
+  #pointView = null;
+  #editView = null;
+  #closeAllPoints = null;
 
-  constructor(point, position, model) {
+  constructor(point, position, model, closeAllPoints) {
     this.#point = point;
     this.#position = position;
     this.#model = model;
+    this.#closeAllPoints = closeAllPoints;
   }
 
-  #render(point, position, model) {
-    const pointView = new PointView(point, openPoint);
-    const editView = new EditPointView(point, model.offersByTypes, closePoint);
-    render(pointView, position);
-
-    function escKeydownHandler(evt) {
-      if (isEscape(evt)) {
-        closePoint(evt);
-      }
+  #escKeydownHandler = (evt) => {
+    if (isEscape(evt)) {
+      this.#closePoint();
     }
+  };
 
-    function closePoint(evt) {
-      evt.preventDefault();
-      render(pointView, position);
-      position.replaceChild(pointView.element, editView.element);
-      document.removeEventListener('keydown', escKeydownHandler);
-    }
+  #closePoint = () => {
+    render(this.#pointView, this.#position);
+    this.#position.replaceChild(this.#pointView.element, this.#editView.element);
+    document.removeEventListener('keydown', this.#escKeydownHandler);
+  };
 
-    function openPoint() {
-      render(editView, position);
-      position.replaceChild(editView.element, pointView.element);
-      document.addEventListener('keydown', escKeydownHandler);
-    }
-  }
+  #openPoint = () => {
+    render(this.#editView, this.#position);
+    this.#position.replaceChild(this.#editView.element, this.#pointView.element);
+    document.addEventListener('keydown', this.#escKeydownHandler);
+  };
 
   init() {
-    this.#render(this.#point, this.#position, this.#model);
+    this.#pointView = new PointView(this.#point, this.#openPoint);
+    this.#editView = new EditPointView(this.#point, this.#model.offersByTypes, this.#closePoint);
+    render(this.#pointView, this.#position);
   }
 }

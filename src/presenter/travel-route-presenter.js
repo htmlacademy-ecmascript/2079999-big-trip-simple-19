@@ -19,15 +19,13 @@ export default class TravelRoutePresenter {
   }
 
   #renderPoint(point) {
-    const pointPresenter = new PointPresenter(point, this.#containerPosition, this.#pointModel);
-    this.#renderedPoints.push(pointPresenter.point);
-    console.log(this.#renderedPoints);
+    const pointPresenter = new PointPresenter(point, this.#containerPosition, this.#pointModel, this.#closeAllPoints.bind(this));
+    this.#renderedPoints.push(pointPresenter);
     pointPresenter.init();
+  }
 
-    function closeAllPoints() {
-      this.#renderedPoints.forEach();
-    }
-    //идея такая: создаем массив презентеров и потом пробегаемся по массиву и закрываем все точки.
+  #closeAllPoints() {
+    this.#renderedPoints.forEach((point) => point.closePoint());
   }
 
   init() {
