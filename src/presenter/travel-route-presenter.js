@@ -3,6 +3,7 @@ import FilterView from '../view/filter.js';
 import SortView from '../view/sort.js';
 import PointView from '../view/point.js';
 import PointPresenter from './point-presenter.js';
+import { PointMode } from '../const.js';
 
 export default class TravelRoutePresenter {
   #filtersPosition = null;
@@ -19,14 +20,14 @@ export default class TravelRoutePresenter {
   }
 
   #renderPoint(point) {
-    const pointPresenter = new PointPresenter(point, this.#containerPosition, this.#pointModel, this.#closeAllPoints.bind(this));
+    const pointPresenter = new PointPresenter(point, this.#containerPosition, this.#pointModel, this.closeOpenedPoints);
     this.#renderedPoints.push(pointPresenter);
     pointPresenter.init();
   }
 
-  #closeAllPoints() {
-    this.#renderedPoints.forEach((point) => point.closePoint());
-  }
+  closeOpenedPoints = () => {
+    this.#renderedPoints.forEach((point) => point.getPointMode() === PointMode.OPENED ? point.closePoint() : '');
+  };
 
   init() {
     render(new FilterView(), this.#filtersPosition, RenderPosition.AFTERBEGIN);
