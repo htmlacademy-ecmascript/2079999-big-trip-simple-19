@@ -37,7 +37,7 @@ function createPointTemplate(point) {
   if (!point) {
     return createEmptyListTemplate();
   }
-  return (`<li class="trip-events__item">
+  return (`<ul class="trip-events__list"><li class="trip-events__item">
             <div class="event">
               <time class="event__date" datetime="2019-03-18">${formatDayDate(point.dateFrom)}</time>
               <div class="event__type">
@@ -62,21 +62,25 @@ function createPointTemplate(point) {
                 <span class="visually-hidden">Open event</span>
               </button>
             </div>
-          </li>`);
+          </li><ul>`);
 }
 
 export default class PointView extends AbstractView {
   #point = null;
   #element = null;
-  #handleOpenForm = null;
+  #openClickHandler = null;
 
 
-  constructor(point, handleOpenForm) {
+  constructor(point, openClickHandler) {
     super();
     this.#point = point;
-    this.#handleOpenForm = handleOpenForm;
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#handleOpenForm);
+    this.#openClickHandler = openClickHandler;
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#handleOpenClick);
   }
+
+  #handleOpenClick = () => {
+    this.#openClickHandler();
+  };
 
   #getTemplate(point) {
     return createPointTemplate(point);

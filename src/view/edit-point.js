@@ -107,16 +107,21 @@ export default class EditPointView extends AbstractView {
   #point = null;
   #offersByType = null;
   #element = null;
-  #closeFormHandler = null;
+  #closeClickHandler = null;
 
-  constructor(point, offersByType, closeFormHandler) {
+  constructor(point, offersByType, closeClickHandler) {
     super();
     this.#point = point;
     this.#offersByType = offersByType;
-    this.#closeFormHandler = closeFormHandler;
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#closeFormHandler);
-    this.element.querySelector('.event__save-btn').addEventListener('submit', this.#closeFormHandler);
+    this.#closeClickHandler = closeClickHandler;
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#closeClickHandler);
+    this.element.addEventListener('submit', this.#handleCloseClick);
   }
+
+  #handleCloseClick = (evt) => {
+    evt.preventDefault();
+    this.#closeClickHandler();
+  };
 
   #getTemplate(point, offersByType) {
     return createEditPointTemplate(point, offersByType);
