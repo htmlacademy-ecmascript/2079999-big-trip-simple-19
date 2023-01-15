@@ -8,7 +8,7 @@ export default class TravelRoutePresenter {
   #containerPosition = null;
   #pointModel = null;
   #points = null;
-  #offersByType = null;
+  #renderedPoints = [];
 
   constructor(filtersPosition, containerPosition, pointModel) {
     this.#filtersPosition = filtersPosition;
@@ -19,7 +19,14 @@ export default class TravelRoutePresenter {
 
   #renderPoint(point) {
     const pointPresenter = new PointPresenter(point, this.#containerPosition, this.#pointModel);
+    this.#renderedPoints.push(pointPresenter.point);
+    console.log(this.#renderedPoints);
     pointPresenter.init();
+
+    function closeAllPoints() {
+      this.#renderedPoints.forEach();
+    }
+    //идея такая: создаем массив презентеров и потом пробегаемся по массиву и закрываем все точки.
   }
 
   init() {
