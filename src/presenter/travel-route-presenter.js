@@ -1,6 +1,7 @@
 import { render, RenderPosition } from '../framework/render.js';
 import FilterView from '../view/filter.js';
 import SortView from '../view/sort.js';
+import PointView from '../view/point.js';
 import PointPresenter from './point-presenter.js';
 
 export default class TravelRoutePresenter {
