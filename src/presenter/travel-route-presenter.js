@@ -1,27 +1,30 @@
 import { render, RenderPosition, remove } from '../framework/render.js';
 import FilterView from '../view/filter.js';
 import SortView from '../view/sort.js';
-import PointView from '../view/point.js';
 import PointPresenter from './point-presenter.js';
 import { PointMode } from '../const.js';
 import { formatDateForSort } from '../utils.js';
+import EmptyPointListView from '../view/empty-point-list.js';
+import PointContainerView from '../view/point-container.js';
 
 export default class TravelRoutePresenter {
   #filtersPosition = null;
-  #containerPosition = null;
+  #contentContainer = null;
+  #pointsContainer = null;
   #pointModel = null;
   #points = null;
   #renderedPoints = [];
 
-  constructor(filtersPosition, containerPosition, pointModel) {
+  constructor(filtersPosition, contentContainer, pointModel) {
     this.#filtersPosition = filtersPosition;
-    this.#containerPosition = containerPosition;
+    this.#contentContainer = contentContainer;
+    this.#pointsContainer = new PointContainerView();
     this.#pointModel = pointModel;
     this.#points = [...this.#pointModel.points];
   }
 
   #renderPoint(point) {
-    const pointPresenter = new PointPresenter(point, this.#containerPosition, this.#pointModel, this.closeOpenedPoints);
+    const pointPresenter = new PointPresenter(point, this.#pointsContainer.element, this.#pointModel, this.closeOpenedPoints);
     this.#renderedPoints.push(pointPresenter);
     pointPresenter.init();
   }
@@ -62,10 +65,11 @@ export default class TravelRoutePresenter {
 
   init() {
     render(new FilterView(), this.#filtersPosition, RenderPosition.AFTERBEGIN);
-    render(new SortView(this.#sortPointsByPrice, this.#sortPointsByDate), this.#containerPosition, RenderPosition.AFTERBEGIN);
+    render(new SortView(this.#sortPointsByPrice, this.#sortPointsByDate), this.#contentContainer, RenderPosition.AFTERBEGIN);
     if (!this.#points || !this.#points.length) {
-      render(new PointView(null), this.#containerPosition);
+      render(new EmptyPointListView(), this.#contentContainer);
     } else {
+      render(this.#pointsContainer, this.#contentContainer);
       this.#points.forEach((point) => this.#renderPoint(point));
     }
   }
