@@ -154,7 +154,7 @@ function getOffersArray(type) {
 
 const points = [{
   basePrice: 500,
-  dateFrom: '2019-07-10T22:55:56.845Z',
+  dateFrom: '2020-05-06T22:55:56.845Z',
   dateTo: '2019-07-11T11:22:13.375Z',
   destination: 1,
   id: 0,
@@ -163,7 +163,7 @@ const points = [{
 },
 {
   basePrice: 2000,
-  dateFrom: '2019-07-12T12:55:56.321Z',
+  dateFrom: '2012-02-18T12:55:56.321Z',
   dateTo: '2019-07-14T12:01:13.653Z',
   destination: 2,
   id: 1,
@@ -172,7 +172,7 @@ const points = [{
 },
 {
   basePrice: 1500,
-  dateFrom: '2019-07-15T09:32:12.532Z',
+  dateFrom: '2023-01-01T09:32:12.532Z',
   dateTo: '2019-07-15T11:56:32.435Z',
   destination: 3,
   id: 2,
@@ -181,7 +181,7 @@ const points = [{
 },
 {
   basePrice: 250,
-  dateFrom: '2019-07-16T15:12:52.532Z',
+  dateFrom: '2022-12-31T15:12:52.532Z',
   dateTo: '2019-07-16T20:41:45.987Z',
   destination: 4,
   id: 3,
@@ -190,7 +190,7 @@ const points = [{
 },
 {
   basePrice: 120,
-  dateFrom: '2019-07-18T06:23:00.235Z',
+  dateFrom: '2021-04-29T06:23:00.235Z',
   dateTo: '2019-07-18T11:56:37.873Z',
   destination: 5,
   id: 4,
@@ -199,7 +199,7 @@ const points = [{
 },
 {
   basePrice: 3500,
-  dateFrom: '2019-07-22T15:00:00.000Z',
+  dateFrom: '2021-03-30T15:00:00.000Z',
   dateTo: '2019-07-24T10:15:00.324Z',
   destination: 6,
   id: 5,
@@ -207,8 +207,8 @@ const points = [{
   type: 'ship'
 },
 {
-  basePrice: 350,
-  dateFrom: '2019-07-24T10:20:00.325Z',
+  basePrice: 500,
+  dateFrom: '2021-03-28T10:20:00.325Z',
   dateTo: '2019-07-24T22:33:34.531Z',
   destination: 7,
   id: 6,

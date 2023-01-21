@@ -1,4 +1,4 @@
-import { render, RenderPosition, remove } from '../framework/render.js';
+import { render, RenderPosition } from '../framework/render.js';
 import FilterView from '../view/filter.js';
 import SortView from '../view/sort.js';
 import PointPresenter from './point-presenter.js';
@@ -23,8 +23,8 @@ export default class TravelRoutePresenter {
     this.#points = [...this.#pointModel.points];
   }
 
-  #renderPoint(point) {
-    const pointPresenter = new PointPresenter(point, this.#pointsContainer.element, this.#pointModel, this.closeOpenedPoints);
+  #createPoint(pointData) {
+    const pointPresenter = new PointPresenter(pointData, this.#pointsContainer.element, this.#pointModel.offersByTypes, this.closeOpenedPoints);
     this.#renderedPoints.push(pointPresenter);
     pointPresenter.init();
   }
@@ -34,33 +34,15 @@ export default class TravelRoutePresenter {
   };
 
   #sortPointsByPrice = () => {
-    this.closeOpenedPoints();
-    this.#renderedPoints.forEach((point) => remove(point.getPointView()));
-    for (let i = 0; i < this.#renderedPoints.length - 1; i++) {
-      for (let j = 0; j < this.#renderedPoints.length - 1; j++) {
-        if (this.#renderedPoints[j].getEventPrice() < this.#renderedPoints[j + 1].getEventPrice()) {
-          const buff = this.#renderedPoints[j];
-          this.#renderedPoints[j] = this.#renderedPoints[j + 1];
-          this.#renderedPoints[j + 1] = buff;
-        }
-      }
-    }
-    this.#renderedPoints.forEach((point) => point.init());
+    this.#pointsContainer.element.innerHTML = '';
+    this.#points.sort((a, b) => ((a['basePrice'] > b['basePrice']) ? -1 : 0));
+    this.#points.forEach((pointData) => this.#createPoint(pointData));
   };
 
   #sortPointsByDate = () => {
-    this.closeOpenedPoints();
-    this.#renderedPoints.forEach((point) => remove(point.getPointView()));
-    for (let i = 0; i < this.#renderedPoints.length - 1; i++) {
-      for (let j = 0; j < this.#renderedPoints.length - 1; j++) {
-        if (formatDateForSort(this.#renderedPoints[j].getEventDate()) < formatDateForSort(this.#renderedPoints[j + 1].getEventDate())) {
-          const buff = this.#renderedPoints[j];
-          this.#renderedPoints[j] = this.#renderedPoints[j + 1];
-          this.#renderedPoints[j + 1] = buff;
-        }
-      }
-    }
-    this.#renderedPoints.forEach((point) => point.init());
+    this.#pointsContainer.element.innerHTML = '';
+    this.#points.sort((a, b) => ((formatDateForSort(a['dateFrom']) > formatDateForSort(b['dateFrom'])) ? -1 : 0));
+    this.#points.forEach((pointData) => this.#createPoint(pointData));
   };
 
   init() {
@@ -70,7 +52,7 @@ export default class TravelRoutePresenter {
       render(new EmptyPointListView(), this.#contentContainer);
     } else {
       render(this.#pointsContainer, this.#contentContainer);
-      this.#points.forEach((point) => this.#renderPoint(point));
+      this.#sortPointsByDate();
     }
   }
 }
