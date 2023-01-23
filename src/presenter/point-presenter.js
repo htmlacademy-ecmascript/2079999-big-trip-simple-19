@@ -45,18 +45,6 @@ export default class PointPresenter {
     return this.#pointMode;
   }
 
-  getEventPrice() {
-    return this.#point.basePrice;
-  }
-
-  getElement() {
-    return this.#pointView.element;
-  }
-
-  getEventDate() {
-    return this.#point.dateFrom;
-  }
-
   init() {
     this.#pointView = new PointView(this.#point, this.openPoint);
     this.#editView = new EditPointView(this.#point, this.#pointOffersByType, this.closePoint);

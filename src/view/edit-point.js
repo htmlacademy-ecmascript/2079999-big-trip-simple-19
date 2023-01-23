@@ -1,13 +1,13 @@
 import { createElement } from '../render.js';
 import { OFFERS_TYPE } from '../const.js';
 import { formatFullDate } from '../utils.js';
-import AbstractView from '../framework/view/abstract-view.js';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 
 function createEventTypeTemplate(pointType) {
   return OFFERS_TYPE.map((eventType, index) => `
     <div class="event__type-item">
       <input id="event-type-${eventType}-${index}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${eventType}"${eventType === pointType ? 'checked' : ''}>
-      <label class="event__type-label  event__type-label--${eventType}" for="event-type-${eventType}-1">${eventType}</label>
+      <label class="event__type-label  event__type-label--${eventType}" for="event-type-${eventType}-${index}">${eventType}</label>
     </div>`).join('');
 }
 
@@ -38,11 +38,11 @@ function createEditPointTemplate(point, offersByType) {
   return (`<form class="event event--edit" action="#" method="post">
             <header class="event__header">
               <div class="event__type-wrapper">
-                <label class="event__type  event__type-btn" for="event-type-toggle-1">
+                <label class="event__type  event__type-btn" for="event-type-toggle-${point.id}">
                   <span class="visually-hidden">Choose event type</span>
                   <img class="event__type-icon" width="17" height="17" src="img/icons/${point.type}.png" alt="Event type icon">
                 </label>
-                <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
+                <input class="event__type-toggle  visually-hidden" id="event-type-toggle-${point.id}" type="checkbox">
 
                 <div class="event__type-list">
                   <fieldset class="event__type-group">
@@ -56,8 +56,8 @@ function createEditPointTemplate(point, offersByType) {
                 <label class="event__label  event__type-output" for="event-destination-1">
                   ${point.type}
                 </label>
-                <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${point.destination.name}" list="destination-list-1">
-                <datalist id="destination-list-1">
+                <input class="event__input  event__input--destination" id="event-destination-${point.id}" type="text" name="event-destination" value="${point.destination.name}" list="destination-list-1">
+                <datalist id="destination-list-${point.id}">
                   <option value="Amsterdam"></option>
                   <option value="Geneva"></option>
                   <option value="Chamonix"></option>
@@ -103,7 +103,7 @@ function createEditPointTemplate(point, offersByType) {
           </form>`);
 }
 
-export default class EditPointView extends AbstractView {
+export default class EditPointView extends AbstractStatefulView {
   #point = null;
   #offersByType = null;
   #element = null;
@@ -112,8 +112,21 @@ export default class EditPointView extends AbstractView {
   constructor(point, offersByType, closeClickHandler) {
     super();
     this.#point = point;
+    this._setState(EditPointView.parsePointToState(this.#point));
     this.#offersByType = offersByType;
     this.#closeClickHandler = closeClickHandler;
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#closeClickHandler);
+    this.element.addEventListener('submit', this.#handleCloseClick);
+    this.element.querySelectorAll('.event__type-input').forEach((input) => input.addEventListener('click', this.#eventTypeHandler));
+  }
+
+  #eventTypeHandler = (evt) => {
+    // evt.preventDefault();
+    this._state.type = evt.target.value;
+    this.updateElement(this._state.type);
+  };
+
+  _restoreHandlers() {
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#closeClickHandler);
     this.element.addEventListener('submit', this.#handleCloseClick);
   }
@@ -129,8 +142,16 @@ export default class EditPointView extends AbstractView {
 
   get element() {
     if (!this.#element){
-      this.#element = createElement(this.#getTemplate(this.#point, this.#offersByType));
+      this.#element = createElement(this.#getTemplate(this._state, this.#offersByType));
     }
     return this.#element;
+  }
+
+  static parsePointToState(point) {
+    return {...point};
+  }
+
+  static parseStateToPoint(state) {
+    return {...state};
   }
 }
