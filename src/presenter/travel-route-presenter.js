@@ -24,7 +24,7 @@ export default class TravelRoutePresenter {
   }
 
   #createPoint(pointData) {
-    const pointPresenter = new PointPresenter(pointData, this.#pointsContainer.element, this.#pointModel.offersByTypes, this.closeOpenedPoints);
+    const pointPresenter = new PointPresenter(pointData, this.#pointsContainer.element, this.#pointModel.offersByTypes, this.closeOpenedPoints, this.#points);
     this.#renderedPoints.push(pointPresenter);
     pointPresenter.init();
   }
