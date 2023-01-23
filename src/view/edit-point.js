@@ -30,14 +30,13 @@ function createOffersListTemplate(point, offersByType) {
     .join('');
 }
 
-function createDestinationOptions() {
-  return DESTINATIONS.map((name) => `<option value="${name}"></option>`).join('');
+function createDestinationOptions(destinations) {
+  return destinations.map((destination) => `<option value="${destination.name}"></option>`).join('');
 }
 
-function createEditPointTemplate(point, offersByType) {
+function createEditPointTemplate(point, offersByType, destinations) {
   const eventTypes = createEventTypeTemplate(point.type);
   const offersList = createOffersListTemplate(point, offersByType);
-  const destinations = createDestinationOptions();
 
   return (`<form class="event event--edit" action="#" method="post">
             <header class="event__header">
@@ -62,7 +61,7 @@ function createEditPointTemplate(point, offersByType) {
                 </label>
                 <input class="event__input  event__input--destination" id="event-destination-${point.id}" type="text" name="event-destination" value="${point.destination.name}" list="destination-list-${point.id}">
                 <datalist id="destination-list-${point.id}">
-                  ${destinations}
+                  ${createDestinationOptions(destinations)}
                 </datalist>
               </div>
 
@@ -110,6 +109,7 @@ export default class EditPointView extends AbstractStatefulView {
   #offersByType = null;
   #allPoints = null;
   #closeClickHandler = null;
+  #destinations = null;
 
   constructor(point, offersByType, closeClickHandler, allPoints) {
     super();
@@ -118,22 +118,18 @@ export default class EditPointView extends AbstractStatefulView {
     this.#offersByType = offersByType;
     this.#closeClickHandler = closeClickHandler;
     this.#allPoints = allPoints;
+    this.#destinations = this.#allPoints.map((pointData) => pointData.destination);
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#closeClickHandler);
     this.element.addEventListener('submit', this.#handleCloseClick);
     this.element.querySelectorAll('.event__type-input').forEach((input) => input.addEventListener('click', this.#eventTypeHandler));
     this.element.querySelector('.event__input--destination').addEventListener('change', this.#pointDestinationHandler);
-
-    const DESTINATIONS = this.#allPoints.map(({name}) => name);
-    console.log(DESTINATIONS);
   }
 
   #pointDestinationHandler = (evt) => {
-    //evt.preventDefault();
-    this._state.destination.name = evt.target.value;
-    console.log(DESTINATIONS);
-    this._state.destination.description = 
+    evt.preventDefault();
+    this._state.destination = this.#destinations.filter((dest) => dest.name === evt.target.value)[0];
     this.updateElement(this._state);
-  }
+  };
 
   #eventTypeHandler = (evt) => {
     evt.preventDefault();
@@ -144,6 +140,7 @@ export default class EditPointView extends AbstractStatefulView {
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#closeClickHandler);
     this.element.addEventListener('submit', this.#handleCloseClick);
     this.element.querySelectorAll('.event__type-input').forEach((input) => input.addEventListener('click', this.#eventTypeHandler));
+    this.element.querySelector('.event__input--destination').addEventListener('change', this.#pointDestinationHandler);
   }
 
   #handleCloseClick = (evt) => {
@@ -152,7 +149,7 @@ export default class EditPointView extends AbstractStatefulView {
   };
 
   get template() {
-    return createEditPointTemplate(this._state, this.#offersByType);
+    return createEditPointTemplate(this._state, this.#offersByType, this.#destinations);
   }
 
   static parsePointToState(point) {
