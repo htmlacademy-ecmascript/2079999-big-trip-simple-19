@@ -2,12 +2,6 @@ import AbstractView from '../framework/view/abstract-view.js';
 import { createElement } from '../render.js';
 import { formatDayDate, formatTime } from '../utils.js';
 
-const FILTERS_MESSAGE = {
-  everything:'Click New Event to create your first point',
-  past: 'There are no past events now',
-  future: 'There are no future events now'
-};
-
 function createOffersListTemplate(point) {
   return point.offers.map((offer) => `
       <li class="event__offer">
@@ -18,26 +12,8 @@ function createOffersListTemplate(point) {
     .join('');
 }
 
-function createEmptyListTemplate() {
-  const filters = document.querySelectorAll('.trip-filters__filter');
-  let checkedFilter = 'everything';
-  filters.forEach((filter) => {
-    if (filter.firstElementChild.checked) {
-      checkedFilter = filter.firstElementChild.value;
-    }
-  });
-  return (`
-  <div>
-    <h2 class="visually-hidden">Trip events</h2>
-    <p class="trip-events__msg">${FILTERS_MESSAGE[checkedFilter]}</p>
-  </div>`);
-}
-
 function createPointTemplate(point) {
-  if (!point) {
-    return createEmptyListTemplate();
-  }
-  return (`<ul class="trip-events__list"><li class="trip-events__item">
+  return (`<li class="trip-events__item">
             <div class="event">
               <time class="event__date" datetime="2019-03-18">${formatDayDate(point.dateFrom)}</time>
               <div class="event__type">
@@ -62,7 +38,7 @@ function createPointTemplate(point) {
                 <span class="visually-hidden">Open event</span>
               </button>
             </div>
-          </li><ul>`);
+          </li>`);
 }
 
 export default class PointView extends AbstractView {

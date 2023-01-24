@@ -5,7 +5,7 @@ function formatFullDate(date) {
 }
 
 function formatDateForSort(date) {
-  return parseInt(dayjs(date).format('DDMMYY'), 10);
+  return parseInt(dayjs(date).format('YYMMDD'), 10);
 }
 
 function formatDayDate(date) {

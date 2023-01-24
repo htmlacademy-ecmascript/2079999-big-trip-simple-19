@@ -1,4 +1,4 @@
-import { render } from '../framework/render.js';
+import { render, replace } from '../framework/render.js';
 import PointView from '../view/point.js';
 import EditPointView from '../view/edit-point.js';
 import { isEscape } from '../utils.js';
@@ -6,17 +6,19 @@ import { PointMode } from '../const.js';
 
 export default class PointPresenter {
   #point = null;
+  #allPoints = null;
   #position = null;
-  #model = null;
+  #pointOffersByType = null;
   #pointView = null;
   #editView = null;
   #closeOpenedPointsHandler = null;
   #pointMode = PointMode.CLOSED;
 
-  constructor(point, position, model, closeOpenedPoints) {
+  constructor(point, position, pointOffersByType, closeOpenedPoints, allPoints) {
     this.#point = point;
+    this.#allPoints = allPoints;
     this.#position = position;
-    this.#model = model;
+    this.#pointOffersByType = pointOffersByType;
     this.#closeOpenedPointsHandler = closeOpenedPoints;
   }
 
@@ -28,7 +30,7 @@ export default class PointPresenter {
 
   closePoint = () => {
     render(this.#pointView, this.#position);
-    this.#position.replaceChild(this.#pointView.element, this.#editView.element);
+    replace(this.#pointView, this.#editView);
     document.removeEventListener('keydown', this.#escKeydownHandler);
     this.#pointMode = PointMode.CLOSED;
   };
@@ -36,7 +38,7 @@ export default class PointPresenter {
   openPoint = () => {
     this.#closeOpenedPointsHandler();
     render(this.#editView, this.#position);
-    this.#position.replaceChild(this.#editView.element, this.#pointView.element);
+    replace(this.#editView, this.#pointView);
     document.addEventListener('keydown', this.#escKeydownHandler);
     this.#pointMode = PointMode.OPENED;
   };
@@ -45,25 +47,9 @@ export default class PointPresenter {
     return this.#pointMode;
   }
 
-  getEventPrice() {
-    return this.#point.basePrice;
-  }
-
-  getElement() {
-    return this.#pointView.element;
-  }
-
-  getPointView() {
-    return this.#pointView;
-  }
-
-  getEventDate() {
-    return this.#point.dateFrom;
-  }
-
   init() {
     this.#pointView = new PointView(this.#point, this.openPoint);
-    this.#editView = new EditPointView(this.#point, this.#model.offersByTypes, this.closePoint);
+    this.#editView = new EditPointView(this.#point, this.#pointOffersByType, this.closePoint, this.#allPoints);
     render(this.#pointView, this.#position);
   }
 }
