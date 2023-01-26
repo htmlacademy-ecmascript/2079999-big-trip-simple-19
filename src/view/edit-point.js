@@ -110,16 +110,17 @@ export default class EditPointView extends AbstractStatefulView {
   #allPoints = null;
   #closeClickHandler = null;
   #destinations = null;
+  #point = null;
 
   constructor(point, offersByType, closeClickHandler, allPoints) {
     super();
-
+    this.#point = point;
     this._setState(EditPointView.parsePointToState(point));
     this.#offersByType = offersByType;
     this.#closeClickHandler = closeClickHandler;
     this.#allPoints = allPoints;
     this.#destinations = this.#allPoints.map((pointData) => pointData.destination);
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#closeClickHandler);
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#handleCloseClick);
     this.element.addEventListener('submit', this.#handleCloseClick);
     this.element.querySelectorAll('.event__type-input').forEach((input) => input.addEventListener('click', this.#eventTypeHandler));
     this.element.querySelector('.event__input--destination').addEventListener('change', this.#pointDestinationHandler);
@@ -137,7 +138,7 @@ export default class EditPointView extends AbstractStatefulView {
   };
 
   _restoreHandlers() {
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#closeClickHandler);
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#handleCloseClick);
     this.element.addEventListener('submit', this.#handleCloseClick);
     this.element.querySelectorAll('.event__type-input').forEach((input) => input.addEventListener('click', this.#eventTypeHandler));
     this.element.querySelector('.event__input--destination').addEventListener('change', this.#pointDestinationHandler);
@@ -145,6 +146,8 @@ export default class EditPointView extends AbstractStatefulView {
 
   #handleCloseClick = (evt) => {
     evt.preventDefault();
+    this._setState(EditPointView.parsePointToState(this.#point));
+    this.updateElement(this._state);
     this.#closeClickHandler();
   };
 
