@@ -13,6 +13,7 @@ export default class TravelRoutePresenter {
   #pointsContainer = null;
   #pointModel = null;
   #points = null;
+  #pointsDestinations = null;
   #renderedPoints = [];
 
   constructor(filtersPosition, contentContainer, pointModel) {
@@ -21,10 +22,11 @@ export default class TravelRoutePresenter {
     this.#pointsContainer = new PointContainerView();
     this.#pointModel = pointModel;
     this.#points = [...this.#pointModel.points];
+    this.#pointsDestinations = [...this.#pointModel.destinations];
   }
 
   #createPoint(pointData) {
-    const pointPresenter = new PointPresenter(pointData, this.#pointsContainer.element, this.#pointModel.offersByTypes, this.closeOpenedPoints, this.#points);
+    const pointPresenter = new PointPresenter(pointData, this.#pointsContainer.element, this.#pointModel.offersByTypes, this.closeOpenedPoints, this.#pointsDestinations);
     this.#renderedPoints.push(pointPresenter);
     pointPresenter.init();
   }

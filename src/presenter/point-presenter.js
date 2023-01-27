@@ -6,7 +6,7 @@ import { PointMode } from '../const.js';
 
 export default class PointPresenter {
   #point = null;
-  #allPoints = null;
+  #pointsDestinations = null;
   #position = null;
   #pointOffersByType = null;
   #pointView = null;
@@ -14,9 +14,9 @@ export default class PointPresenter {
   #closeOpenedPointsHandler = null;
   #pointMode = PointMode.CLOSED;
 
-  constructor(point, position, pointOffersByType, closeOpenedPoints, allPoints) {
+  constructor(point, position, pointOffersByType, closeOpenedPoints, pointsDestinations) {
     this.#point = point;
-    this.#allPoints = allPoints;
+    this.#pointsDestinations = pointsDestinations;
     this.#position = position;
     this.#pointOffersByType = pointOffersByType;
     this.#closeOpenedPointsHandler = closeOpenedPoints;
@@ -49,7 +49,7 @@ export default class PointPresenter {
 
   init() {
     this.#pointView = new PointView(this.#point, this.openPoint);
-    this.#editView = new EditPointView(this.#point, this.#pointOffersByType, this.closePoint, this.#allPoints);
+    this.#editView = new EditPointView(this.#point, this.#pointOffersByType, this.closePoint, this.#pointsDestinations);
     render(this.#pointView, this.#position);
   }
 }

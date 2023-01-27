@@ -109,21 +109,19 @@ function createEditPointTemplate(point, offersByType, destinations) {
 export default class EditPointView extends AbstractStatefulView {
 
   #offersByType = null;
-  #allPoints = null;
+  #pointsDestinations = null;
   #closeClickHandler = null;
-  #destinations = null;
   #point = null;
   #dateFromPicker = null;
   #dateToPicker = null;
 
-  constructor(point, offersByType, closeClickHandler, allPoints) {
+  constructor(point, offersByType, closeClickHandler, pointsDestinations) {
     super();
     this.#point = point;
     this._setState(EditPointView.parsePointToState(point));
     this.#offersByType = offersByType;
     this.#closeClickHandler = closeClickHandler;
-    this.#allPoints = allPoints;
-    this.#destinations = this.#allPoints.map((pointData) => pointData.destination);
+    this.#pointsDestinations = pointsDestinations;
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#handleCloseClick);
     this.element.addEventListener('submit', this.#handleCloseClick);
     this.element.querySelectorAll('.event__type-input').forEach((input) => input.addEventListener('click', this.#eventTypeHandler));
@@ -133,7 +131,7 @@ export default class EditPointView extends AbstractStatefulView {
 
   #pointDestinationHandler = (evt) => {
     evt.preventDefault();
-    this._state.destination = this.#destinations.filter((dest) => dest.name === evt.target.value)[0];
+    this._state.destination = this.#pointsDestinations.filter((dest) => dest.name === evt.target.value)[0];
     this.updateElement(this._state);
   };
 
@@ -210,7 +208,7 @@ export default class EditPointView extends AbstractStatefulView {
   }
 
   get template() {
-    return createEditPointTemplate(this._state, this.#offersByType, this.#destinations);
+    return createEditPointTemplate(this._state, this.#offersByType, this.#pointsDestinations);
   }
 
   static parsePointToState(point) {

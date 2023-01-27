@@ -30,6 +30,10 @@ export default class PointModel {
     }
   }
 
+  get destinations() {
+    return this.#destinations;
+  }
+
   get points() {
     return this.#points;
   }
