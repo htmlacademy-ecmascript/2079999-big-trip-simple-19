@@ -41,4 +41,17 @@ export default class PointModel {
   get offersByTypes() {
     return this.#offersByType;
   }
+
+  set points (points) {
+    this.#points = points;
+  }
+
+  updatePoint(pointData) {
+    this.#points.find((point, index) => {
+      if (point.id === pointData.id) {
+        this.#points[index] = pointData;
+      }
+    });
+  }
+
 }
