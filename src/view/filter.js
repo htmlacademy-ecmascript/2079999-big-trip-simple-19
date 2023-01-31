@@ -27,6 +27,19 @@ function createFilterTemplate() {
 }
 
 export default class FilterView extends AbstractView {
+  #setFilterHandler = null;
+
+  constructor(setFilterHandler) {
+    super();
+    this.#setFilterHandler = setFilterHandler;
+    this.element.querySelector('.trip-filters').addEventListener('change', this.#handleSetFilter);
+  }
+
+  #handleSetFilter = (evt) => {
+    evt.preventDefault();
+    this.#setFilterHandler(evt.target.value);
+  };
+
   get template() {
     return createFilterTemplate();
   }
