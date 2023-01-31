@@ -1,5 +1,4 @@
 import { render, RenderPosition } from '../framework/render.js';
-import FilterView from '../view/filter.js';
 import SortView from '../view/sort.js';
 import PointPresenter from './point-presenter.js';
 import { PointMode } from '../const.js';
@@ -8,7 +7,6 @@ import EmptyPointListView from '../view/empty-point-list.js';
 import PointContainerView from '../view/point-container.js';
 
 export default class TravelRoutePresenter {
-  #filtersPosition = null;
   #contentContainer = null;
   #pointsContainer = null;
   #pointModel = null;
@@ -16,8 +14,7 @@ export default class TravelRoutePresenter {
   #pointsDestinations = null;
   #renderedPoints = [];
 
-  constructor(filtersPosition, contentContainer, pointModel) {
-    this.#filtersPosition = filtersPosition;
+  constructor(contentContainer, pointModel) {
     this.#contentContainer = contentContainer;
     this.#pointsContainer = new PointContainerView();
     this.#pointModel = pointModel;
@@ -48,7 +45,6 @@ export default class TravelRoutePresenter {
   };
 
   init() {
-    render(new FilterView(), this.#filtersPosition, RenderPosition.AFTERBEGIN);
     render(new SortView(this.#sortPointsByPrice, this.#sortPointsByDate), this.#contentContainer, RenderPosition.AFTERBEGIN);
     if (!this.#points || !this.#points.length) {
       render(new EmptyPointListView(), this.#contentContainer);
