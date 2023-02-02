@@ -1,6 +1,8 @@
+import { FilterValues } from '../const';
+
 export default class FilterModel {
 
-  #filter = null;
+  #filter = FilterValues.EVERYTHING;
 
   constructor() {
   }
@@ -9,7 +11,7 @@ export default class FilterModel {
     return this.#filter;
   }
 
-  setFilter(value) {
+  set filter(value) {
     this.#filter = value;
   }
 }

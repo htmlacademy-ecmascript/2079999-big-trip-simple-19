@@ -10,15 +10,17 @@ export default class TravelRoutePresenter {
   #contentContainer = null;
   #pointsContainer = null;
   #pointModel = null;
+  #filterModel = null;
   #points = null;
   #pointsDestinations = null;
   #renderedPoints = [];
 
-  constructor(contentContainer, pointModel) {
+  constructor(contentContainer, pointModel, filterModel) {
     this.#contentContainer = contentContainer;
     this.#pointsContainer = new PointContainerView();
     this.#pointModel = pointModel;
-    this.#points = [...this.#pointModel.points];
+    this.#filterModel = filterModel;
+    this.#points = [...this.#pointModel.filterPoints(this.#filterModel.filter)];
     this.#pointsDestinations = [...this.#pointModel.destinations];
   }
 
@@ -43,6 +45,12 @@ export default class TravelRoutePresenter {
     this.#points.sort((a, b) => ((formatDateForSort(a['dateFrom']) > formatDateForSort(b['dateFrom'])) ? -1 : 0));
     this.#points.forEach((pointData) => this.#createPoint(pointData));
   };
+
+  renderPoints() {
+    this.#points = [...this.#pointModel.filterPoints(this.#filterModel.filter)];
+    render(this.#pointsContainer, this.#contentContainer);
+    this.#sortPointsByDate();
+  }
 
   init() {
     render(new SortView(this.#sortPointsByPrice, this.#sortPointsByDate), this.#contentContainer, RenderPosition.AFTERBEGIN);

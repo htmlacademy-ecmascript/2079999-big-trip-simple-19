@@ -14,7 +14,7 @@ const offersByType = getOffersByType();
 
 const pointModel = new PointModel({points, destinations, offers, offersByType});
 const filterModel = new FilterModel();
-const travelRoutePresenter = new TravelRoutePresenter(contentContainer, pointModel);
-const filterPresenter = new FilterPresenter(filtersPosition, filterModel);
+const travelRoutePresenter = new TravelRoutePresenter(contentContainer, pointModel, filterModel);
+const filterPresenter = new FilterPresenter(filtersPosition, filterModel, travelRoutePresenter);
 travelRoutePresenter.init();
 filterPresenter.init();

@@ -1,3 +1,6 @@
+import { FilterValues } from '../const';
+import dayjs from 'dayjs';
+
 export default class PointModel {
   #points = null;
   #destinations = null;
@@ -45,6 +48,20 @@ export default class PointModel {
   set points (points) {
     this.#points = points;
   }
+
+  filterPoints = (filterValue) => {
+    const now = dayjs();
+
+    if (filterValue === FilterValues.PAST) {
+      return this.#points.filter((pointData) => dayjs(pointData.dateFrom) < now);
+    }
+
+    if (filterValue === FilterValues.FUTURE) {
+      return this.#points.filter((pointData) => dayjs(pointData.dateFrom) > now);
+    }
+
+    return this.#points;
+  };
 
   updatePoint(pointData) {
     this.#points.find((point, index) => {
