@@ -27,7 +27,7 @@ export default class TravelRoutePresenter {
   }
 
   #addPointHandler = (evt) => {
-    render(new AddPointView(), this.#pointsContainer.element, RenderPosition.AFTERBEGIN);
+    render(new AddPointView(this.#pointsDestinations), this.#pointsContainer.element, RenderPosition.AFTERBEGIN);
     evt.target.disabled = true;
   };
 

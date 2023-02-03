@@ -1,14 +1,30 @@
-import AbstractView from '../framework/view/abstract-view.js';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
+import { OFFERS_TYPE } from '../const.js';
 
-function createAddPointTemplate() {
+function createEventTypeTemplate(pointType) {
+  return OFFERS_TYPE.map((eventType, index) => `
+    <div class="event__type-item">
+      <input id="event-type-${eventType}-${index}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${eventType}"${eventType === pointType ? 'checked' : ''}>
+      <label class="event__type-label  event__type-label--${eventType}" for="event-type-${eventType}-${index}">${eventType}</label>
+    </div>`).join('');
+}
+
+function createDestinationOptions(destinations) {
+  return destinations.map((destination) => `<option value="${destination.name}"></option>`).join('');
+}
+
+function createAddPointTemplate(destinations, point) {
+  const newPointId = destinations.length + 1;
+  const eventTypes = createEventTypeTemplate(point.type);
+
   return (`<form class="event event--edit" action="#" method="post">
             <header class="event__header">
               <div class="event__type-wrapper">
-                <label class="event__type  event__type-btn" for="event-type-toggle-1">
+                <label class="event__type  event__type-btn" for="event-type-toggle-${newPointId}">
                   <span class="visually-hidden">Choose event type</span>
-                  <img class="event__type-icon" width="17" height="17" src="img/icons/flight.png" alt="Event type icon">
+                  <img class="event__type-icon" width="17" height="17" src="img/icons/${point.type}.png" alt="Event type icon">
                 </label>
-                <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
+                <input class="event__type-toggle  visually-hidden" id="event-type-toggle-${newPointId}" type="checkbox">
 
                 <div class="event__type-list">
                   <fieldset class="event__type-group">
@@ -19,14 +35,12 @@ function createAddPointTemplate() {
               </div>
 
               <div class="event__field-group  event__field-group--destination">
-                <label class="event__label  event__type-output" for="event-destination-1">
-                  Flight
+                <label class="event__label  event__type-output" for="event-destination-${newPointId}">
+                  ${point.type}
                 </label>
-                <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="Geneva" list="destination-list-1">
-                <datalist id="destination-list-1">
-                  <option value="Amsterdam"></option>
-                  <option value="Geneva"></option>
-                  <option value="Chamonix"></option>
+                <input class="event__input  event__input--destination" id="event-destination-${newPointId}" type="text" name="event-destination" value="" list="destination-list-${newPointId}">
+                <datalist id="destination-list-${newPointId}">
+                  ${createDestinationOptions(destinations)}
                 </datalist>
               </div>
 
@@ -119,8 +133,49 @@ function createAddPointTemplate() {
           </form>`);
 }
 
-export default class AddPointView extends AbstractView {
+export default class AddPointView extends AbstractStatefulView {
+  #destinations = null;
+  #pointData = {
+    'basePrice': 0,
+    'dateFrom': '2023-01-02T12:00:00.000Z',
+    'dateTo': '2023-01-03T12:00:0.000Z',
+    'destination': {
+      'id': 0,
+      'description': '',
+      'name': '',
+      'pictures': []
+    },
+    'id': 0,
+    'offers': [],
+    'type': 'taxi'
+  };
+
+  constructor(pointsDestinations) {
+    super();
+    this._setState(AddPointView.parsePointToState(this.#pointData));
+    this.#destinations = pointsDestinations;
+    this.element.querySelectorAll('.event__type-input').forEach((input) => input.addEventListener('click', this.#eventTypeHandler));
+  }
+
+  #eventTypeHandler = (evt) => {
+    evt.preventDefault();
+    this.#pointData.type = evt.target.value;
+    this.updateElement(this._state);
+  };
+
+  _restoreHandlers() {
+    this.element.querySelectorAll('.event__type-input').forEach((input) => input.addEventListener('click', this.#eventTypeHandler));
+  }
+
   get template() {
-    return createAddPointTemplate();
+    return createAddPointTemplate(this.#destinations, this.#pointData);
+  }
+
+  static parsePointToState(point) {
+    return {...point};
+  }
+
+  static parseStateToPoint(state) {
+    return {...state};
   }
 }
