@@ -114,20 +114,27 @@ export default class EditPointView extends AbstractStatefulView {
   #point = null;
   #dateFromPicker = null;
   #dateToPicker = null;
+  #handleDeletePoint = null;
 
-  constructor(point, offersByType, closeClickHandler, pointsDestinations) {
+  constructor(point, offersByType, closeClickHandler, pointsDestinations, handleDeletePoint) {
     super();
     this.#point = point;
     this._setState(EditPointView.parsePointToState(point));
     this.#offersByType = offersByType;
     this.#closeClickHandler = closeClickHandler;
     this.#pointsDestinations = pointsDestinations;
+    this.#handleDeletePoint = handleDeletePoint;
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#handleCloseClick);
     this.element.addEventListener('submit', this.#handleCloseClick);
     this.element.querySelectorAll('.event__type-input').forEach((input) => input.addEventListener('click', this.#eventTypeHandler));
     this.element.querySelector('.event__input--destination').addEventListener('change', this.#pointDestinationHandler);
+    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#deletePointHandler);
     this.#setDatePicker();
   }
+
+  #deletePointHandler = () => {
+    this.#handleDeletePoint(this.#point);
+  };
 
   #pointDestinationHandler = (evt) => {
     evt.preventDefault();
@@ -145,6 +152,7 @@ export default class EditPointView extends AbstractStatefulView {
     this.element.addEventListener('submit', this.#handleCloseClick);
     this.element.querySelectorAll('.event__type-input').forEach((input) => input.addEventListener('click', this.#eventTypeHandler));
     this.element.querySelector('.event__input--destination').addEventListener('change', this.#pointDestinationHandler);
+    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#deletePointHandler);
     this.#setDatePicker();
   }
 

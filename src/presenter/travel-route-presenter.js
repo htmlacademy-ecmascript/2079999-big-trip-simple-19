@@ -5,6 +5,7 @@ import { PointMode } from '../const.js';
 import { formatDateForSort } from '../utils.js';
 import EmptyPointListView from '../view/empty-point-list.js';
 import PointContainerView from '../view/point-container.js';
+import AddPointView from '../view/add-point.js';
 
 export default class TravelRoutePresenter {
   #contentContainer = null;
@@ -22,15 +23,27 @@ export default class TravelRoutePresenter {
     this.#filterModel = filterModel;
     this.#points = [...this.#pointModel.filterPoints(this.#filterModel.filter)];
     this.#pointsDestinations = [...this.#pointModel.destinations];
+    document.querySelector('.trip-main__event-add-btn').addEventListener('click', this.#addPointHandler);
   }
 
+  #addPointHandler = (evt) => {
+    render(new AddPointView(), this.#pointsContainer.element, RenderPosition.AFTERBEGIN);
+    evt.target.disabled = true;
+  };
+
+  #deletePoint = (pointData) => {
+    this.#pointModel.deletePoint(pointData);
+    this.#renderedPoints.forEach((pointPresenter) => pointPresenter.destroy());
+    this.renderPoints();
+  };
+
   #createPoint(pointData) {
-    const pointPresenter = new PointPresenter(pointData, this.#pointsContainer.element, this.#pointModel.offersByTypes, this.closeOpenedPoints, this.#pointsDestinations);
+    const pointPresenter = new PointPresenter(pointData, this.#pointsContainer.element, this.#pointModel.offersByTypes, this.#closeOpenedPoints, this.#pointsDestinations, this.#deletePoint);
     this.#renderedPoints.push(pointPresenter);
     pointPresenter.init();
   }
 
-  closeOpenedPoints = () => {
+  #closeOpenedPoints = () => {
     this.#renderedPoints.forEach((point) => point.getPointMode() === PointMode.OPENED ? point.closePoint() : '');
   };
 
@@ -48,7 +61,6 @@ export default class TravelRoutePresenter {
 
   renderPoints() {
     this.#points = [...this.#pointModel.filterPoints(this.#filterModel.filter)];
-    render(this.#pointsContainer, this.#contentContainer);
     this.#sortPointsByDate();
   }
 
@@ -58,7 +70,7 @@ export default class TravelRoutePresenter {
       render(new EmptyPointListView(), this.#contentContainer);
     } else {
       render(this.#pointsContainer, this.#contentContainer);
-      this.#sortPointsByDate();
+      this.renderPoints();
     }
   }
 }
