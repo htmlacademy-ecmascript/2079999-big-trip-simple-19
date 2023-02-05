@@ -13,10 +13,10 @@ function createEventTypeTemplate(pointType) {
 
 function createOffersListTemplate(point, offersByType) {
   const offerType = offersByType.find((offer) => offer.type === point.type);
-  return offerType.offers.map((offer, index) => `
+  return offerType.offers.map((offer) => `
         <div class="event__offer-selector">
-          <input class="event__offer-checkbox  visually-hidden" id="event-offer-${point.id}-${offer.id}-${index}" type="checkbox" name="event-offer-${point.id}-${offer.id}"${isIncludes(point.offers, offer.id) ? 'checked' : ''}>
-          <label class="event__offer-label" for="event-offer-${point.id}-${offer.id}-${index}">
+          <input class="event__offer-checkbox  visually-hidden" id="event-offer-${point.id}-${offer.id}" type="checkbox" name="event-offer-${point.id}-${offer.id}">
+          <label class="event__offer-label" for="event-offer-${point.id}-${offer.id}">
             <span class="event__offer-title">${offer.title}</span>
             &plus;&euro;&nbsp;
             <span class="event__offer-price">${offer.price}</span>
@@ -29,8 +29,18 @@ function createDestinationOptions(destinations) {
   return destinations.map((destination) => `<option value="${destination.name}"></option>`).join('');
 }
 
-function createAddPointTemplate(destinations, point) {
+function getDestinationPhotos(pointDestination) {
+  if (!pointDestination) {
+    return '';
+  }
+  return pointDestination.pictures.map((picture) => `
+  <img class="event__photo" src="${picture.src}" alt="${picture.description}">`).join('');
+}
+
+function createAddPointTemplate(destinations, offersByType,point) {
   const eventTypes = createEventTypeTemplate(point.type);
+  const pointDestination = (destinations.find((dist) => dist.name === point.destination)) || '';
+  const offersList = createOffersListTemplate(point, offersByType);
 
   return (`<form class="event event--edit" action="#" method="post">
             <header class="event__header">
@@ -83,28 +93,17 @@ function createAddPointTemplate(destinations, point) {
                 <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
                 <div class="event__available-offers">
-                  <div class="event__offer-selector">
-                    <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage" checked>
-                    <label class="event__offer-label" for="event-offer-luggage-1">
-                      <span class="event__offer-title">Add luggage</span>
-                      &plus;&euro;&nbsp;
-                      <span class="event__offer-price">30</span>
-                    </label>
-                  </div>
+                  ${offersList}
                 </div>
               </section>
 
               <section class="event__section  event__section--destination">
                 <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-                <p class="event__destination-description">${description}</p>
+                <p class="event__destination-description">${(pointDestination.description) || ''}</p>
 
                 <div class="event__photos-container">
                   <div class="event__photos-tape">
-                    <img class="event__photo" src="${srcphoto}" alt="Event photo">
-                    <img class="event__photo" src="img/photos/2.jpg" alt="Event photo">
-                    <img class="event__photo" src="img/photos/3.jpg" alt="Event photo">
-                    <img class="event__photo" src="img/photos/4.jpg" alt="Event photo">
-                    <img class="event__photo" src="img/photos/5.jpg" alt="Event photo">
+                    ${getDestinationPhotos(pointDestination)}
                   </div>
                 </div>
               </section>
@@ -119,21 +118,39 @@ export default class AddPointView extends AbstractStatefulView {
     type: 'taxi',
     dateFrom: '',
     dateTo: '',
-    basePrice: ''
+    basePrice: '',
+    pictures: [],
+    offers: []
   };
 
   #dateFromPicker = null;
   #dateToPicker = null;
+  #offersByType = null;
+  #handleCloselPoint = null;
+  #handleAddPoint = null;
 
-  constructor(pointsDestinations) {
+  constructor(pointsDestinations, offersByType, handleCloselPoint, handleAddPoint) {
     super();
     this._setState(AddPointView.parsePointToState(this.#pointData));
     this.#destinations = pointsDestinations;
+    this.#offersByType = offersByType;
+    this.#handleCloselPoint = handleCloselPoint;
+    this.#handleAddPoint = handleAddPoint;
     this.element.querySelectorAll('.event__type-input').forEach((input) => input.addEventListener('click', this.#eventTypeHandler));
     this.element.querySelector('.event__input--price').addEventListener('change', this.#setBasePriceHandler);
     this.element.querySelector('.event__input--destination').addEventListener('change', this.#setDestinationHandler);
+    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#handleCloselPoint);
+    this.element.addEventListener('submit', this.#savePointHandler);
     this.#setDatePicker();
   }
+
+  #savePointHandler = (evt) => {
+    evt.preventDefault();
+    this._setState(AddPointView.parsePointToState(this.#pointData));
+    this.updateElement(this._state);
+    this.#handleAddPoint(this._state);
+    this.#handleCloselPoint();
+  };
 
   #setDestinationHandler = (evt) => {
     evt.preventDefault();
@@ -154,6 +171,8 @@ export default class AddPointView extends AbstractStatefulView {
     this.element.querySelectorAll('.event__type-input').forEach((input) => input.addEventListener('click', this.#eventTypeHandler));
     this.element.querySelector('.event__input--price').addEventListener('change', this.#setBasePriceHandler);
     this.element.querySelector('.event__input--destination').addEventListener('change', this.#setDestinationHandler);
+    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#handleCloselPoint);
+    this.element.addEventListener('submit', this.#savePointHandler);
     this.#setDatePicker();
   }
 
@@ -208,7 +227,7 @@ export default class AddPointView extends AbstractStatefulView {
   }
 
   get template() {
-    return createAddPointTemplate(this.#destinations, this._state);
+    return createAddPointTemplate(this.#destinations, this.#offersByType, this._state);
   }
 
   static parsePointToState(point) {

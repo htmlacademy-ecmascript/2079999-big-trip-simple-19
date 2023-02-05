@@ -1,4 +1,4 @@
-import { render, RenderPosition } from '../framework/render.js';
+import { render, RenderPosition, remove } from '../framework/render.js';
 import SortView from '../view/sort.js';
 import PointPresenter from './point-presenter.js';
 import { PointMode } from '../const.js';
@@ -6,6 +6,7 @@ import { formatDateForSort } from '../utils.js';
 import EmptyPointListView from '../view/empty-point-list.js';
 import PointContainerView from '../view/point-container.js';
 import AddPointView from '../view/add-point.js';
+import { isEscape } from '../utils.js';
 
 export default class TravelRoutePresenter {
   #contentContainer = null;
@@ -15,6 +16,8 @@ export default class TravelRoutePresenter {
   #points = null;
   #pointsDestinations = null;
   #renderedPoints = [];
+  #addPointView = null;
+  #addPointButton = null;
 
   constructor(contentContainer, pointModel, filterModel) {
     this.#contentContainer = contentContainer;
@@ -26,9 +29,30 @@ export default class TravelRoutePresenter {
     document.querySelector('.trip-main__event-add-btn').addEventListener('click', this.#addPointHandler);
   }
 
+  #escKeydownHandler = (evt) => {
+    if (isEscape(evt)) {
+      this.#closeAddPoint();
+    }
+  };
+
   #addPointHandler = (evt) => {
-    render(new AddPointView(this.#pointsDestinations), this.#pointsContainer.element, RenderPosition.AFTERBEGIN);
-    evt.target.disabled = true;
+    document.addEventListener('keydown', this.#escKeydownHandler);
+    this.#addPointView = new AddPointView(this.#pointsDestinations, this.#pointModel.offersByTypes, this.#closeAddPoint, this.#addPoint);
+    render(this.#addPointView, this.#pointsContainer.element, RenderPosition.AFTERBEGIN);
+    this.#addPointButton = evt.target;
+    this.#addPointButton.disabled = true;
+  };
+
+  #closeAddPoint = () => {
+    remove(this.#addPointView);
+    document.removeEventListener('keydown', this.#escKeydownHandler);
+    this.#addPointButton.disabled = false;
+  };
+
+  #addPoint = (pointData) => {
+    this.#pointModel.addPoint(pointData);
+    this.#renderedPoints.forEach((pointPresenter) => pointPresenter.destroy());
+    this.renderPoints();
   };
 
   #deletePoint = (pointData) => {

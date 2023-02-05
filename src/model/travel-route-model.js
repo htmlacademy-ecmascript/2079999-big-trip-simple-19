@@ -74,4 +74,8 @@ export default class PointModel {
   deletePoint(pointdata) {
     this.#points.splice((this.#points.indexOf(pointdata)), 1);
   }
+
+  addPoint(pointData) {
+    this.#points.push(pointData);
+  }
 }
