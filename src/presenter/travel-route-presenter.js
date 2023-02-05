@@ -61,11 +61,17 @@ export default class TravelRoutePresenter {
     this.renderPoints();
   };
 
-  #createPoint(pointData) {
-    const pointPresenter = new PointPresenter(pointData, this.#pointsContainer.element, this.#pointModel.offersByTypes, this.#closeOpenedPoints, this.#pointsDestinations, this.#deletePoint);
+  #updatePoint = (pointData) => {
+    this.#pointModel.updatePoint(pointData);
+    this.#renderedPoints.forEach((pointPresenter) => pointPresenter.destroy());
+    this.renderPoints();
+  };
+
+  #createPoint = (pointData) => {
+    const pointPresenter = new PointPresenter(pointData, this.#pointsContainer.element, this.#pointModel.offersByTypes, this.#closeOpenedPoints, this.#pointsDestinations, this.#deletePoint, this.#updatePoint);
     this.#renderedPoints.push(pointPresenter);
     pointPresenter.init();
-  }
+  };
 
   #closeOpenedPoints = () => {
     this.#renderedPoints.forEach((point) => point.getPointMode() === PointMode.OPENED ? point.closePoint() : '');

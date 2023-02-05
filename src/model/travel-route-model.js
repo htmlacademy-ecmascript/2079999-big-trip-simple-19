@@ -63,19 +63,19 @@ export default class PointModel {
     return this.#points;
   };
 
-  updatePoint(pointData) {
+  updatePoint = (pointData) => {
     this.#points.find((point, index) => {
       if (point.id === pointData.id) {
         this.#points[index] = pointData;
       }
     });
-  }
+  };
 
-  deletePoint(pointdata) {
+  deletePoint = (pointdata) => {
     this.#points.splice((this.#points.indexOf(pointdata)), 1);
-  }
+  };
 
-  addPoint(pointData) {
+  addPoint = (pointData) => {
     this.#points.push(pointData);
-  }
+  };
 }

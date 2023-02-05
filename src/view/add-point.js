@@ -1,5 +1,6 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { OFFERS_TYPE } from '../const.js';
+import dayjs from 'dayjs';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 
@@ -114,11 +115,11 @@ function createAddPointTemplate(destinations, offersByType,point) {
 export default class AddPointView extends AbstractStatefulView {
   #destinations = null;
   #pointData = {
-    destination: '',
+    destination: 'Select...',
     type: 'taxi',
-    dateFrom: '',
-    dateTo: '',
-    basePrice: '',
+    dateFrom: dayjs().format('DD/MM/YY HH:mm'),
+    dateTo: dayjs().add(1, 'd').format('DD/MM/YY HH:mm'),
+    basePrice: '0',
     pictures: [],
     offers: []
   };
@@ -146,8 +147,6 @@ export default class AddPointView extends AbstractStatefulView {
 
   #savePointHandler = (evt) => {
     evt.preventDefault();
-    this._setState(AddPointView.parsePointToState(this.#pointData));
-    this.updateElement(this._state);
     this.#handleAddPoint(this._state);
     this.#handleCloselPoint();
   };

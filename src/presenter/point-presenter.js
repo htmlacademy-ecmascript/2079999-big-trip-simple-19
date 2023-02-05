@@ -14,14 +14,16 @@ export default class PointPresenter {
   #closeOpenedPointsHandler = null;
   #pointMode = PointMode.CLOSED;
   #deletePoint = null;
+  #updatePoint = null;
 
-  constructor(point, position, pointOffersByType, closeOpenedPoints, pointsDestinations, deletePoint) {
+  constructor(point, position, pointOffersByType, closeOpenedPoints, pointsDestinations, deletePoint, updatePoint) {
     this.#point = point;
     this.#pointsDestinations = pointsDestinations;
     this.#position = position;
     this.#pointOffersByType = pointOffersByType;
     this.#closeOpenedPointsHandler = closeOpenedPoints;
     this.#deletePoint = deletePoint;
+    this.#updatePoint = updatePoint;
   }
 
   #escKeydownHandler = (evt) => {
@@ -56,7 +58,7 @@ export default class PointPresenter {
 
   init() {
     this.#pointView = new PointView(this.#point, this.openPoint);
-    this.#editView = new EditPointView(this.#point, this.#pointOffersByType, this.closePoint, this.#pointsDestinations, this.#deletePoint);
+    this.#editView = new EditPointView(this.#point, this.#pointOffersByType, this.closePoint, this.#pointsDestinations, this.#deletePoint, this.#updatePoint);
     render(this.#pointView, this.#position);
   }
 }
