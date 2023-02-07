@@ -1,37 +1,79 @@
-import { render, RenderPosition } from '../framework/render.js';
-import FilterView from '../view/filter.js';
+import { render, RenderPosition, remove } from '../framework/render.js';
 import SortView from '../view/sort.js';
 import PointPresenter from './point-presenter.js';
 import { PointMode } from '../const.js';
 import { formatDateForSort } from '../utils.js';
 import EmptyPointListView from '../view/empty-point-list.js';
 import PointContainerView from '../view/point-container.js';
+import AddPointView from '../view/add-point.js';
+import { isEscape } from '../utils.js';
 
 export default class TravelRoutePresenter {
-  #filtersPosition = null;
   #contentContainer = null;
   #pointsContainer = null;
   #pointModel = null;
+  #filterModel = null;
   #points = null;
   #pointsDestinations = null;
   #renderedPoints = [];
+  #addPointView = null;
+  #addPointButton = null;
 
-  constructor(filtersPosition, contentContainer, pointModel) {
-    this.#filtersPosition = filtersPosition;
+  constructor(contentContainer, pointModel, filterModel) {
     this.#contentContainer = contentContainer;
     this.#pointsContainer = new PointContainerView();
     this.#pointModel = pointModel;
-    this.#points = [...this.#pointModel.points];
+    this.#filterModel = filterModel;
+    this.#points = [...this.#pointModel.filterPoints(this.#filterModel.filter)];
     this.#pointsDestinations = [...this.#pointModel.destinations];
+    document.querySelector('.trip-main__event-add-btn').addEventListener('click', this.#addPointHandler);
   }
 
-  #createPoint(pointData) {
-    const pointPresenter = new PointPresenter(pointData, this.#pointsContainer.element, this.#pointModel.offersByTypes, this.closeOpenedPoints, this.#pointsDestinations);
+  #escKeydownHandler = (evt) => {
+    if (isEscape(evt)) {
+      this.#closeAddPoint();
+    }
+  };
+
+  #addPointHandler = (evt) => {
+    document.addEventListener('keydown', this.#escKeydownHandler);
+    this.#addPointView = new AddPointView(this.#pointsDestinations, this.#pointModel.offersByTypes, this.#closeAddPoint, this.#addPoint);
+    render(this.#addPointView, this.#pointsContainer.element, RenderPosition.AFTERBEGIN);
+    this.#addPointButton = evt.target;
+    this.#addPointButton.disabled = true;
+  };
+
+  #closeAddPoint = () => {
+    remove(this.#addPointView);
+    document.removeEventListener('keydown', this.#escKeydownHandler);
+    this.#addPointButton.disabled = false;
+  };
+
+  #addPoint = (pointData) => {
+    this.#pointModel.addPoint(pointData);
+    this.#renderedPoints.forEach((pointPresenter) => pointPresenter.destroy());
+    this.renderPoints();
+  };
+
+  #deletePoint = (pointData) => {
+    this.#pointModel.deletePoint(pointData);
+    this.#renderedPoints.forEach((pointPresenter) => pointPresenter.destroy());
+    this.renderPoints();
+  };
+
+  #updatePoint = (pointData) => {
+    this.#pointModel.updatePoint(pointData);
+    this.#renderedPoints.forEach((pointPresenter) => pointPresenter.destroy());
+    this.renderPoints();
+  };
+
+  #createPoint = (pointData) => {
+    const pointPresenter = new PointPresenter(pointData, this.#pointsContainer.element, this.#pointModel.offersByTypes, this.#closeOpenedPoints, this.#pointsDestinations, this.#deletePoint, this.#updatePoint);
     this.#renderedPoints.push(pointPresenter);
     pointPresenter.init();
-  }
+  };
 
-  closeOpenedPoints = () => {
+  #closeOpenedPoints = () => {
     this.#renderedPoints.forEach((point) => point.getPointMode() === PointMode.OPENED ? point.closePoint() : '');
   };
 
@@ -47,14 +89,18 @@ export default class TravelRoutePresenter {
     this.#points.forEach((pointData) => this.#createPoint(pointData));
   };
 
+  renderPoints() {
+    this.#points = [...this.#pointModel.filterPoints(this.#filterModel.filter)];
+    this.#sortPointsByDate();
+  }
+
   init() {
-    render(new FilterView(), this.#filtersPosition, RenderPosition.AFTERBEGIN);
     render(new SortView(this.#sortPointsByPrice, this.#sortPointsByDate), this.#contentContainer, RenderPosition.AFTERBEGIN);
     if (!this.#points || !this.#points.length) {
       render(new EmptyPointListView(), this.#contentContainer);
     } else {
       render(this.#pointsContainer, this.#contentContainer);
-      this.#sortPointsByDate();
+      this.renderPoints();
     }
   }
 }
