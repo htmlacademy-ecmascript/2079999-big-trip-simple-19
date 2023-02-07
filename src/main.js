@@ -12,10 +12,13 @@ const TOKEN = 'Basic u834u3r32j';
 
 const pointsApiService = new PointApiService(URL, TOKEN);
 const pointModel = new PointModel(pointsApiService);
-// const filterModel = new FilterModel();
-// const travelRoutePresenter = new TravelRoutePresenter(contentContainer, pointModel, filterModel);
-// const filterPresenter = new FilterPresenter(filtersPosition, filterModel, travelRoutePresenter);
 
-// travelRoutePresenter.init();
-// filterPresenter.init();
-pointModel.points.then((data) => console.log(data));
+
+pointModel.init().then(() => {
+  const filterModel = new FilterModel();
+  const travelRoutePresenter = new TravelRoutePresenter(contentContainer, pointModel, filterModel);
+  const filterPresenter = new FilterPresenter(filtersPosition, filterModel, travelRoutePresenter);
+  travelRoutePresenter.init();
+  filterPresenter.init();
+});
+
