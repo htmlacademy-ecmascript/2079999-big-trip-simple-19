@@ -3,12 +3,12 @@ import { createElement } from '../render.js';
 import { formatDayDate, formatTime } from '../utils.js';
 
 function createOffersListTemplate(point) {
-  return point.offers.map((offer) => `
+  return point.offers.map((offer) => offer ? `
       <li class="event__offer">
         <span class="event__offer-title">${offer.title}</span>
         &plus;&euro;&nbsp;
         <span class="event__offer-price">${offer.price}</span>
-      </li>`)
+      </li>` : '')
     .join('');
 }
 
