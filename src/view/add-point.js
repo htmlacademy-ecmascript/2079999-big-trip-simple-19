@@ -31,16 +31,16 @@ function createDestinationOptions(destinations) {
 }
 
 function getDestinationPhotos(pointDestination) {
-  if (!pointDestination) {
+  if (!pointDestination.pictures) {
     return '';
   }
   return pointDestination.pictures.map((picture) => `
   <img class="event__photo" src="${picture.src}" alt="${picture.description}">`).join('');
 }
 
-function createAddPointTemplate(destinations, offersByType,point) {
+function createAddPointTemplate(destinations, offersByType, point) {
   const eventTypes = createEventTypeTemplate(point.type);
-  const pointDestination = (destinations.find((dist) => dist.name === point.destination)) || '';
+  //const pointDestination = (destinations.find((dist) => dist.name === point.destination)) || '';
   const offersList = createOffersListTemplate(point, offersByType);
 
   return (`<form class="event event--edit" action="#" method="post">
@@ -64,7 +64,7 @@ function createAddPointTemplate(destinations, offersByType,point) {
                 <label class="event__label  event__type-output" for="event-destination">
                   ${point.type}
                 </label>
-                <input class="event__input  event__input--destination" id="event-destination" type="text" name="event-destination" value="${point.destination}" list="destination-list">
+                <input class="event__input  event__input--destination" id="event-destination" type="text" name="event-destination" value="${point.destination.name}" list="destination-list">
                 <datalist id="destination-list">
                   ${createDestinationOptions(destinations)}
                 </datalist>
@@ -100,11 +100,11 @@ function createAddPointTemplate(destinations, offersByType,point) {
 
               <section class="event__section  event__section--destination">
                 <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-                <p class="event__destination-description">${(pointDestination.description) || ''}</p>
+                <p class="event__destination-description">${(point.destination.description) || ''}</p>
 
                 <div class="event__photos-container">
                   <div class="event__photos-tape">
-                    ${getDestinationPhotos(pointDestination)}
+                    ${getDestinationPhotos(point.destination)}
                   </div>
                 </div>
               </section>
@@ -115,12 +115,13 @@ function createAddPointTemplate(destinations, offersByType,point) {
 export default class AddPointView extends AbstractStatefulView {
   #destinations = null;
   #pointData = {
-    destination: 'Select...',
+    destination: {
+      name: 'choose city'
+    },
     type: 'taxi',
     dateFrom: dayjs().format('DD/MM/YY HH:mm'),
     dateTo: dayjs().add(1, 'd').format('DD/MM/YY HH:mm'),
     basePrice: '0',
-    pictures: [],
     offers: []
   };
 
@@ -142,8 +143,25 @@ export default class AddPointView extends AbstractStatefulView {
     this.element.querySelector('.event__input--destination').addEventListener('change', this.#setDestinationHandler);
     this.element.querySelector('.event__reset-btn').addEventListener('click', this.#handleCloselPoint);
     this.element.addEventListener('submit', this.#savePointHandler);
+    this.element.querySelectorAll('.event__offer-checkbox').forEach((input) => input.addEventListener('input', this.#offerChangeHandler));
     this.#setDatePicker();
   }
+
+  #offerChangeHandler = (evt) => {
+
+    const offerElement = evt.target;
+    const newOfferId = Number(offerElement.name.slice(-1));
+    const offersByType = this.#offersByType.find((offer) => offer.type === this.#pointData.type);
+    const newOffer = offersByType.offers.find((offer) => offer.id === newOfferId);
+
+    if (offerElement.checked) {
+      this._state.offers.push(newOffer);
+    } else {
+      const offer = this._state.offers.find((elem) => JSON.stringify(elem) === JSON.stringify(newOffer));
+      const offerInd = this._state.offers.indexOf(offer);
+      this._state.offers.splice(offerInd, 1);
+    }
+  };
 
   #savePointHandler = (evt) => {
     evt.preventDefault();
@@ -153,7 +171,8 @@ export default class AddPointView extends AbstractStatefulView {
 
   #setDestinationHandler = (evt) => {
     evt.preventDefault();
-    this.updateElement({destination: evt.target.value});
+    const destination = this.#destinations.filter((dest) => dest.name === evt.target.value)[0];
+    this.updateElement({destination: destination});
   };
 
   #setBasePriceHandler = (evt) => {
@@ -172,6 +191,7 @@ export default class AddPointView extends AbstractStatefulView {
     this.element.querySelector('.event__input--destination').addEventListener('change', this.#setDestinationHandler);
     this.element.querySelector('.event__reset-btn').addEventListener('click', this.#handleCloselPoint);
     this.element.addEventListener('submit', this.#savePointHandler);
+    this.element.querySelectorAll('.event__offer-checkbox').forEach((input) => input.addEventListener('input', this.#offerChangeHandler));
     this.#setDatePicker();
   }
 

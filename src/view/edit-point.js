@@ -13,16 +13,15 @@ function createEventTypeTemplate(pointType) {
 }
 
 function isIncludes(pointOffers, offerType) {
-  for (let i = 0; i < pointOffers.length; i++) {
-    return (pointOffers[i].id === offerType);
-  }
+  const pointOffersId = pointOffers.map((offer) => offer.id);
+  return pointOffersId.includes(offerType.id);
 }
 
 function createOffersListTemplate(point, offersByType) {
   const offerType = offersByType.find((offer) => offer.type === point.type);
   return offerType.offers.map((offer, index) => `
         <div class="event__offer-selector">
-          <input class="event__offer-checkbox  visually-hidden" id="event-offer-${point.id}-${offer.id}-${index}" type="checkbox" name="event-offer-${point.id}-${offer.id}"${isIncludes(point.offers, offer.id) ? 'checked' : ''}>
+          <input class="event__offer-checkbox  visually-hidden" id="event-offer-${point.id}-${offer.id}-${index}" type="checkbox" name="event-offer-${point.id}-${offer.id}"${isIncludes(point.offers, offer) ? 'checked' : ''}>
           <label class="event__offer-label" for="event-offer-${point.id}-${offer.id}-${index}">
             <span class="event__offer-title">${offer.title}</span>
             &plus;&euro;&nbsp;
@@ -132,8 +131,25 @@ export default class EditPointView extends AbstractStatefulView {
     this.element.querySelectorAll('.event__type-input').forEach((input) => input.addEventListener('click', this.#eventTypeHandler));
     this.element.querySelector('.event__input--destination').addEventListener('change', this.#pointDestinationHandler);
     this.element.querySelector('.event__reset-btn').addEventListener('click', this.#deletePointHandler);
+    this.element.querySelectorAll('.event__offer-checkbox').forEach((input) => input.addEventListener('input', this.#offerChangeHandler));
     this.#setDatePicker();
   }
+
+  #offerChangeHandler = (evt) => {
+
+    const offerElement = evt.target;
+    const newOfferId = Number(offerElement.name.slice(-1));
+    const offersByType = this.#offersByType.find((offer) => offer.type === this.#point.type);
+    const newOffer = offersByType.offers.find((offer) => offer.id === newOfferId);
+
+    if (offerElement.checked) {
+      this._state.offers.push(newOffer);
+    } else {
+      const offer = this._state.offers.find((elem) => JSON.stringify(elem) === JSON.stringify(newOffer));
+      const offerInd = this._state.offers.indexOf(offer);
+      this._state.offers.splice(offerInd, 1);
+    }
+  };
 
   #closeClickHandler = () => {
     this._setState(EditPointView.parsePointToState(this.#point));
@@ -174,6 +190,7 @@ export default class EditPointView extends AbstractStatefulView {
     this.element.querySelectorAll('.event__type-input').forEach((input) => input.addEventListener('click', this.#eventTypeHandler));
     this.element.querySelector('.event__input--destination').addEventListener('change', this.#pointDestinationHandler);
     this.element.querySelector('.event__reset-btn').addEventListener('click', this.#deletePointHandler);
+    this.element.querySelectorAll('.event__offer-checkbox').forEach((input) => input.addEventListener('input', this.#offerChangeHandler));
     this.#setDatePicker();
   }
 

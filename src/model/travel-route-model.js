@@ -11,10 +11,6 @@ export default class PointModel {
     this.#pointsApiService = pointsApiService;
   }
 
-  #adaptToServer() {
-
-  }
-
   #adaptFromServer(data) {
     const convertedData = [...data];
     convertedData.forEach((obj) => {
@@ -61,6 +57,7 @@ export default class PointModel {
   };
 
   updatePoint = (pointData) => {
+    this.#pointsApiService.updatePoint(pointData);
     this.#points.find((point, index) => {
       if (point.id === pointData.id) {
         this.#points[index] = pointData;
@@ -68,11 +65,13 @@ export default class PointModel {
     });
   };
 
-  deletePoint = (pointdata) => {
-    this.#points.splice((this.#points.indexOf(pointdata)), 1);
+  deletePoint = (pointData) => {
+    this.#pointsApiService.deletePoint(pointData);
+    this.#points.splice((this.#points.indexOf(pointData)), 1);
   };
 
   addPoint = (pointData) => {
+    this.#pointsApiService.addPoint(pointData);
     this.#points.push(pointData);
   };
 
