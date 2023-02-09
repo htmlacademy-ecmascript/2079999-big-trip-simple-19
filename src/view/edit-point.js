@@ -1,11 +1,10 @@
-import { OFFERS_TYPE } from '../const.js';
 import { formatFullDate } from '../utils.js';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 
-function createEventTypeTemplate(pointType) {
-  return OFFERS_TYPE.map((eventType, index) => `
+function createEventTypeTemplate(pointType, offersTypes) {
+  return offersTypes.map((eventType, index) => `
     <div class="event__type-item">
       <input id="event-type-${eventType}-${index}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${eventType}"${eventType === pointType ? 'checked' : ''}>
       <label class="event__type-label  event__type-label--${eventType}" for="event-type-${eventType}-${index}">${eventType}</label>
@@ -35,8 +34,8 @@ function createDestinationOptions(destinations) {
   return destinations.map((destination) => `<option value="${destination.name}"></option>`).join('');
 }
 
-function createEditPointTemplate(point, offersByType, destinations) {
-  const eventTypes = createEventTypeTemplate(point.type);
+function createEditPointTemplate(point, offersByType, destinations, offersTypes) {
+  const eventTypes = createEventTypeTemplate(point.type, offersTypes);
   const offersList = createOffersListTemplate(point, offersByType);
 
   return (`<form class="event event--edit" action="#" method="post">
@@ -115,12 +114,14 @@ export default class EditPointView extends AbstractStatefulView {
   #dateToPicker = null;
   #handleDeletePoint = null;
   #handleUpdatePoint = null;
+  #offersTypes = null;
 
   constructor(point, offersByType, handleCloseClick, pointsDestinations, handleDeletePoint, handleUpdatePoint) {
     super();
     this.#point = point;
     this._setState(EditPointView.parsePointToState(point));
     this.#offersByType = offersByType;
+    this.#offersTypes = this.#offersByType.map((offerByType) => offerByType.type);
     this.#handleCloseClick = handleCloseClick;
     this.#pointsDestinations = pointsDestinations;
     this.#handleDeletePoint = handleDeletePoint;
@@ -135,8 +136,74 @@ export default class EditPointView extends AbstractStatefulView {
     this.#setDatePicker();
   }
 
-  #offerChangeHandler = (evt) => {
+  get template() {
+    return createEditPointTemplate(this._state, this.#offersByType, this.#pointsDestinations, this.#offersTypes);
+  }
 
+  removeElement() {
+    super.removeElement();
+
+    if (this.#dateFromPicker) {
+      this.#dateFromPicker.destroy();
+      this.#dateFromPicker = null;
+    }
+
+    if (this.#dateToPicker) {
+      this.#dateToPicker.destroy();
+      this.#dateToPicker = null;
+    }
+  }
+
+  _restoreHandlers() {
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#closeClickHandler);
+    this.element.addEventListener('submit', this.#savePointHandler);
+    this.element.querySelector('.event__input--price').addEventListener('change', this.#setBasePriceHandler);
+    this.element.querySelectorAll('.event__type-input').forEach((input) => input.addEventListener('click', this.#eventTypeHandler));
+    this.element.querySelector('.event__input--destination').addEventListener('change', this.#pointDestinationHandler);
+    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#deletePointHandler);
+    this.element.querySelectorAll('.event__offer-checkbox').forEach((input) => input.addEventListener('input', this.#offerChangeHandler));
+    this.#setDatePicker();
+  }
+
+  #setDatePicker = () => {
+    this.#dateFromPicker = flatpickr(
+      this.element.querySelector(`#event-start-time-${this._state.id}`),
+      {
+        enableTime: true,
+        dateFormat: 'd/m/y H:i',
+        defaultDate: this._state.dateFrom,
+        onChange: this.#dateFromChangeHandler
+      }
+    );
+
+    this.#dateToPicker = flatpickr(
+      this.element.querySelector(`#event-end-time-${this._state.id}`),
+      {
+        enableTime: true,
+        dateFormat: 'd/m/y H:i',
+        defaultDate: this._state.dateTo,
+        onChange: this.#dateToChangeHandler
+      }
+    );
+  };
+
+  #dateFromChangeHandler = ([userDate]) => {
+    this.updateElement(
+      {
+        dateFrom: userDate
+      }
+    );
+  };
+
+  #dateToChangeHandler = ([userDate]) => {
+    this.updateElement(
+      {
+        dateTo: userDate
+      }
+    );
+  };
+
+  #offerChangeHandler = (evt) => {
     const offerElement = evt.target;
     const newOfferId = Number(offerElement.name.slice(-1));
     const offersByType = this.#offersByType.find((offer) => offer.type === this.#point.type);
@@ -182,73 +249,6 @@ export default class EditPointView extends AbstractStatefulView {
     evt.preventDefault();
     this.updateElement({type: evt.target.value});
   };
-
-  _restoreHandlers() {
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#closeClickHandler);
-    this.element.addEventListener('submit', this.#savePointHandler);
-    this.element.querySelector('.event__input--price').addEventListener('change', this.#setBasePriceHandler);
-    this.element.querySelectorAll('.event__type-input').forEach((input) => input.addEventListener('click', this.#eventTypeHandler));
-    this.element.querySelector('.event__input--destination').addEventListener('change', this.#pointDestinationHandler);
-    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#deletePointHandler);
-    this.element.querySelectorAll('.event__offer-checkbox').forEach((input) => input.addEventListener('input', this.#offerChangeHandler));
-    this.#setDatePicker();
-  }
-
-  #dateFromChangeHandler = ([userDate]) => {
-    this.updateElement(
-      {
-        dateFrom: userDate
-      }
-    );
-  };
-
-  #dateToChangeHandler = ([userDate]) => {
-    this.updateElement(
-      {
-        dateTo: userDate
-      }
-    );
-  };
-
-  #setDatePicker = () => {
-    this.#dateFromPicker = flatpickr(
-      this.element.querySelector(`#event-start-time-${this._state.id}`),
-      {
-        enableTime: true,
-        dateFormat: 'd/m/y H:i',
-        defaultDate: this._state.dateFrom,
-        onChange: this.#dateFromChangeHandler
-      }
-    );
-
-    this.#dateToPicker = flatpickr(
-      this.element.querySelector(`#event-end-time-${this._state.id}`),
-      {
-        enableTime: true,
-        dateFormat: 'd/m/y H:i',
-        defaultDate: this._state.dateTo,
-        onChange: this.#dateToChangeHandler
-      }
-    );
-  };
-
-  removeElement() {
-    super.removeElement();
-
-    if (this.#dateFromPicker) {
-      this.#dateFromPicker.destroy();
-      this.#dateFromPicker = null;
-    }
-
-    if (this.#dateToPicker) {
-      this.#dateToPicker.destroy();
-      this.#dateToPicker = null;
-    }
-  }
-
-  get template() {
-    return createEditPointTemplate(this._state, this.#offersByType, this.#pointsDestinations);
-  }
 
   static parsePointToState(point) {
     return {...point};

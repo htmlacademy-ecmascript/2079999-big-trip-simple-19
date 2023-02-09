@@ -11,21 +11,6 @@ export default class PointModel {
     this.#pointsApiService = pointsApiService;
   }
 
-  #adaptFromServer(data) {
-    const convertedData = [...data];
-    convertedData.forEach((obj) => {
-      obj.basePrice = obj.base_price;
-      delete obj.base_price;
-
-      obj.dateFrom = obj.date_from;
-      delete obj.date_from;
-
-      obj.dateTo = obj.date_to;
-      delete obj.date_to;
-    });
-    return convertedData;
-  }
-
   get points() {
     return this.#adaptFromServer(this.#points);
   }
@@ -40,6 +25,15 @@ export default class PointModel {
 
   set points(points) {
     this. this.#points = points;
+  }
+
+  async init() {
+    this.#destinations = await this.#pointsApiService.destinations;
+    this.#offersByType = await this.#pointsApiService.offers;
+    this.#points = await this.#pointsApiService.points;
+    this.#points = this.#adaptFromServer(this.#points);
+    this.#comparePointsAndDestination();
+    this.#comparePointsAndOffers();
   }
 
   filterPoints = (filterValue) => {
@@ -75,6 +69,21 @@ export default class PointModel {
     this.#points.push(pointData);
   };
 
+  #adaptFromServer(data) {
+    const convertedData = [...data];
+    convertedData.forEach((obj) => {
+      obj.basePrice = obj.base_price;
+      delete obj.base_price;
+
+      obj.dateFrom = obj.date_from;
+      delete obj.date_from;
+
+      obj.dateTo = obj.date_to;
+      delete obj.date_to;
+    });
+    return convertedData;
+  }
+
   #comparePointsAndDestination() {
     for (let i = 0; i < this.#points.length; i++) {
       this.#points[i].destination = this.#destinations.find((destination) => this.#points[i].destination === destination.id);
@@ -91,15 +100,6 @@ export default class PointModel {
         point.offers[i] = offerByType.offers.find((offer) => offer.id === point.offers[i]);
       }
     });
-  }
-
-  async init() {
-    this.#destinations = await this.#pointsApiService.destinations;
-    this.#offersByType = await this.#pointsApiService.offers;
-    this.#points = await this.#pointsApiService.points;
-    this.#points = this.#adaptFromServer(this.#points);
-    this.#comparePointsAndDestination();
-    this.#comparePointsAndOffers();
   }
 }
 

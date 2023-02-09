@@ -12,12 +12,12 @@ export default class FilterPresenter {
     this.#travelRoutePresenter = travelRoutePresenter;
   }
 
+  init() {
+    render(new FilterView(this.#setFilter), this.#filtersPosition, RenderPosition.AFTERBEGIN);
+  }
+
   #setFilter = (value) => {
     this.#filterModel.filter = value;
     this.#travelRoutePresenter.renderPoints();
   };
-
-  init() {
-    render(new FilterView(this.#setFilter), this.#filtersPosition, RenderPosition.AFTERBEGIN);
-  }
 }

@@ -47,6 +47,10 @@ export default class SortView extends AbstractView {
     this.#addEventListenersToSort();
   }
 
+  get template() {
+    return createSortTemplate();
+  }
+
   #addEventListenersToSort() {
     this.element.querySelector('#sort-day').addEventListener('click', this.#handleSortByDateHandler);
     this.element.querySelector('#sort-price').addEventListener('click', this.#handleSortByPriceHandler);
@@ -65,8 +69,4 @@ export default class SortView extends AbstractView {
     }
     this.#sortMode = SortMode.DAY;
   };
-
-  get template() {
-    return createSortTemplate();
-  }
 }

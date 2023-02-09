@@ -18,6 +18,8 @@ export default class TravelRoutePresenter {
   #renderedPoints = [];
   #addPointView = null;
   #addPointButton = null;
+  #sortPointView = null;
+  #emptyListMsgContainer = null;
 
   constructor(contentContainer, pointModel, filterModel) {
     this.#contentContainer = contentContainer;
@@ -27,21 +29,33 @@ export default class TravelRoutePresenter {
     this.#points = [...this.#pointModel.filterPoints(this.#filterModel.filter)];
     this.#pointsDestinations = [...this.#pointModel.destinations];
     document.querySelector('.trip-main__event-add-btn').addEventListener('click', this.#addPointHandler);
+    this.#sortPointView = new SortView(this.#sortPointsByPrice, this.#sortPointsByDate);
   }
 
-  #escKeydownHandler = (evt) => {
-    if (isEscape(evt)) {
-      this.#closeAddPoint();
+  renderPoints() {
+    this.#points = [...this.#pointModel.filterPoints(this.#filterModel.filter)];
+    render(this.#pointsContainer, this.#contentContainer);
+    render(this.#sortPointView, this.#contentContainer, RenderPosition.AFTERBEGIN);
+    this.#emptyListMsgContainer = document.querySelector('.trip-events__msg-container');
+    if (!this.#points || !this.#points.length) {
+      remove(this.#sortPointView);
+      this.#contentContainer.innerHTML = '';
+      render(new EmptyPointListView(this.#filterModel.filter), this.#contentContainer);
     }
-  };
+    if (this.#emptyListMsgContainer) {
+      this.#emptyListMsgContainer.innerHTML = '';
+    }
+    this.#sortPointsByDate();
+  }
 
-  #addPointHandler = (evt) => {
-    document.addEventListener('keydown', this.#escKeydownHandler);
-    this.#addPointView = new AddPointView(this.#pointsDestinations, this.#pointModel.offersByTypes, this.#closeAddPoint, this.#addPoint);
-    render(this.#addPointView, this.#pointsContainer.element, RenderPosition.AFTERBEGIN);
-    this.#addPointButton = evt.target;
-    this.#addPointButton.disabled = true;
-  };
+  init() {
+    if (!this.#points || !this.#points.length) {
+      render(new EmptyPointListView(this.#filterModel.filter), this.#contentContainer);
+    } else {
+      this.renderPoints();
+    }
+  }
+
 
   #closeAddPoint = () => {
     remove(this.#addPointView);
@@ -89,18 +103,24 @@ export default class TravelRoutePresenter {
     this.#points.forEach((pointData) => this.#createPoint(pointData));
   };
 
-  renderPoints() {
-    this.#points = [...this.#pointModel.filterPoints(this.#filterModel.filter)];
-    this.#sortPointsByDate();
-  }
-
-  init() {
-    render(new SortView(this.#sortPointsByPrice, this.#sortPointsByDate), this.#contentContainer, RenderPosition.AFTERBEGIN);
-    if (!this.#points || !this.#points.length) {
-      render(new EmptyPointListView(), this.#contentContainer);
-    } else {
-      render(this.#pointsContainer, this.#contentContainer);
-      this.renderPoints();
+  #escKeydownHandler = (evt) => {
+    if (isEscape(evt)) {
+      this.#closeAddPoint();
     }
-  }
+  };
+
+  #addPointHandler = (evt) => {
+    if (!this.#points || !this.#points.length) {
+      this.#emptyListMsgContainer = document.querySelector('.trip-events__msg-container');
+      if (this.#emptyListMsgContainer) {
+        this.#emptyListMsgContainer.innerHTML = '';
+      }
+      render(this.#pointsContainer, this.#contentContainer);
+    }
+    document.addEventListener('keydown', this.#escKeydownHandler);
+    this.#addPointView = new AddPointView(this.#pointsDestinations, this.#pointModel.offersByTypes, this.#closeAddPoint, this.#addPoint);
+    render(this.#addPointView, this.#pointsContainer.element, RenderPosition.AFTERBEGIN);
+    this.#addPointButton = evt.target;
+    this.#addPointButton.disabled = true;
+  };
 }

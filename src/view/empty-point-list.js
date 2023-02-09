@@ -6,23 +6,22 @@ const FILTERS_MESSAGE = {
   future: 'There are no future events now'
 };
 
-function createEmptyListTemplate() {
-
-  const filters = document.querySelectorAll('.trip-filters__filter');
-  let checkedFilter = 'everything';
-  filters.forEach((filter) => {
-    if (filter.firstElementChild.checked) {
-      checkedFilter = filter.firstElementChild.value;
-    }
-  });
+function createEmptyListTemplate(filter) {
   return (`
-  <div>
-    <p class="trip-events__msg">${FILTERS_MESSAGE[checkedFilter]}</p>
+  <div class="trip-events__msg-container">
+    <p class="trip-events__msg">${FILTERS_MESSAGE[filter]}</p>
   </div>`);
 }
 export default class EmptyPointListView extends AbstractView {
 
+  #filter = null;
+
+  constructor(filter) {
+    super();
+    this.#filter = filter;
+  }
+
   get template() {
-    return createEmptyListTemplate();
+    return createEmptyListTemplate(this.#filter);
   }
 }
