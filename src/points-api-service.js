@@ -10,26 +10,6 @@ const Method = {
 
 export default class PointsApiService extends ApiService {
 
-  #adaptToServer(data) {
-    const convertedData = {...data};
-
-    convertedData['base_price'] = Number(convertedData.basePrice);
-    delete convertedData.basePrice;
-
-    convertedData['date_from'] = convertedData.dateFrom;
-    delete convertedData.dateFrom;
-
-    convertedData['date_to'] = convertedData.dateTo;
-    delete convertedData.dateTo;
-
-    convertedData.destination = convertedData.destination.id;
-    if(convertedData.offers) {
-      convertedData.offers = convertedData.offers.map((offer) => offer.id);
-    }
-
-    return convertedData;
-  }
-
   get points() {
     return this._load({url: 'points'})
       .then(ApiService.parseResponse);
@@ -78,5 +58,25 @@ export default class PointsApiService extends ApiService {
     });
 
     return response;
+  }
+
+  #adaptToServer(data) {
+    const convertedData = {...data};
+
+    convertedData['base_price'] = Number(convertedData.basePrice);
+    delete convertedData.basePrice;
+
+    convertedData['date_from'] = convertedData.dateFrom;
+    delete convertedData.dateFrom;
+
+    convertedData['date_to'] = convertedData.dateTo;
+    delete convertedData.dateTo;
+
+    convertedData.destination = convertedData.destination.id;
+    if(convertedData.offers) {
+      convertedData.offers = convertedData.offers.map((offer) => offer.id);
+    }
+
+    return convertedData;
   }
 }

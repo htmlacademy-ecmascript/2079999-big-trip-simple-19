@@ -35,12 +35,12 @@ export default class FilterView extends AbstractView {
     this.element.querySelector('.trip-filters').addEventListener('change', this.#handleSetFilter);
   }
 
+  get template() {
+    return createFilterTemplate();
+  }
+
   #handleSetFilter = (evt) => {
     evt.preventDefault();
     this.#setFilterHandler(evt.target.value);
   };
-
-  get template() {
-    return createFilterTemplate();
-  }
 }

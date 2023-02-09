@@ -9,7 +9,7 @@ function formatDateForSort(date) {
 }
 
 function formatDayDate(date) {
-  return dayjs(date).format('DD MMM');
+  return dayjs(date).format('MMM DD');
 }
 
 function formatTime(date) {

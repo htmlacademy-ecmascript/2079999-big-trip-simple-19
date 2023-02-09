@@ -1,5 +1,5 @@
 import AbstractView from '../framework/view/abstract-view.js';
-import { createElement } from '../render.js';
+import { createElement } from '../framework/render.js';
 import { formatDayDate, formatTime } from '../utils.js';
 
 function createOffersListTemplate(point) {
@@ -46,20 +46,11 @@ export default class PointView extends AbstractView {
   #element = null;
   #openClickHandler = null;
 
-
   constructor(point, openClickHandler) {
     super();
     this.#point = point;
     this.#openClickHandler = openClickHandler;
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#handleOpenClick);
-  }
-
-  #handleOpenClick = () => {
-    this.#openClickHandler();
-  };
-
-  #getTemplate(point) {
-    return createPointTemplate(point);
   }
 
   get element() {
@@ -68,4 +59,12 @@ export default class PointView extends AbstractView {
     }
     return this.#element;
   }
+
+  #getTemplate(point) {
+    return createPointTemplate(point);
+  }
+
+  #handleOpenClick = () => {
+    this.#openClickHandler();
+  };
 }

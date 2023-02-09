@@ -26,11 +26,9 @@ export default class PointPresenter {
     this.#updatePoint = updatePoint;
   }
 
-  #escKeydownHandler = (evt) => {
-    if (isEscape(evt)) {
-      this.closePoint();
-    }
-  };
+  getPointMode() {
+    return this.#pointMode;
+  }
 
   closePoint = () => {
     render(this.#pointView, this.#position);
@@ -47,10 +45,6 @@ export default class PointPresenter {
     this.#pointMode = PointMode.OPENED;
   };
 
-  getPointMode() {
-    return this.#pointMode;
-  }
-
   destroy() {
     this.#pointView.removeElement();
     this.#editView.removeElement();
@@ -61,4 +55,10 @@ export default class PointPresenter {
     this.#editView = new EditPointView(this.#point, this.#pointOffersByType, this.closePoint, this.#pointsDestinations, this.#deletePoint, this.#updatePoint);
     render(this.#pointView, this.#position);
   }
+
+  #escKeydownHandler = (evt) => {
+    if (isEscape(evt)) {
+      this.closePoint();
+    }
+  };
 }
