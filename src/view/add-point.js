@@ -118,8 +118,8 @@ export default class AddPointView extends AbstractStatefulView {
       description: ''
     },
     type: 'taxi',
-    dateFrom: dayjs().format('DD/MM/YY HH:mm'),
-    dateTo: dayjs().add(1, 'd').format('DD/MM/YY HH:mm'),
+    dateFrom: '2023-02-13T13:00:00.000Z',
+    dateTo: '2023-02-14T14:00:00.000Z',
     basePrice: '0',
     offers: []
   };
