@@ -207,19 +207,11 @@ export default class AddPointView extends AbstractStatefulView {
   };
 
   #dateFromChangeHandler = ([userDate]) => {
-    this.updateElement(
-      {
-        dateFrom: userDate
-      }
-    );
+    this.updateElement({dateFrom: userDate.toISOString()});
   };
 
   #dateToChangeHandler = ([userDate]) => {
-    this.updateElement(
-      {
-        dateTo: userDate
-      }
-    );
+    this.updateElement({dateTo: userDate.toISOString()});
   };
 
   #savePointHandler = (evt) => {

@@ -99,7 +99,7 @@ export default class TravelRoutePresenter {
 
   #sortPointsByDate = () => {
     this.#pointsContainer.element.innerHTML = '';
-    this.#points.sort((a, b) => ((formatDateForSort(a['dateFrom']) > formatDateForSort(b['dateFrom'])) ? -1 : 0));
+    this.#points.sort((a, b) => ((formatDateForSort(a['dateFrom']) < formatDateForSort(b['dateFrom'])) ? -1 : 0));
     this.#points.forEach((pointData) => this.#createPoint(pointData));
   };
 
